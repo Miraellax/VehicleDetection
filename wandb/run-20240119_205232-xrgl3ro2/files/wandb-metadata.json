@@ -1,0 +1,54 @@
+{
+    "os": "Windows-10-10.0.19045-SP0",
+    "python": "3.9.13",
+    "heartbeatAt": "2024-01-19T15:52:33.919694",
+    "startedAt": "2024-01-19T15:52:32.377326",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "task=detect",
+        "mode=train",
+        "model=yolov8s.pt",
+        "data=C:\\Users\\Alex\\PycharmProjects\\Cursach3\\Emergency-Vehicles-Russia-3/data.yaml",
+        "epochs=25",
+        "imgsz=640",
+        "plots=True"
+    ],
+    "state": "running",
+    "program": "-m __main__",
+    "codePathLocal": null,
+    "host": "DESKTOP-GS1S5NT",
+    "username": "Alex",
+    "executable": "C:\\Users\\Alex\\PycharmProjects\\Cursach3\\venv\\Scripts\\python.exe",
+    "cpu_count": 10,
+    "cpu_count_logical": 20,
+    "cpu_freq": {
+        "current": 1200.0,
+        "min": 0.0,
+        "max": 2901.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1200.0,
+            "min": 0.0,
+            "max": 2901.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 953.2249755859375,
+            "used": 802.0007362365723
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3060",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3060",
+            "memory_total": 12884901888
+        }
+    ],
+    "memory": {
+        "total": 31.84461212158203
+    }
+}

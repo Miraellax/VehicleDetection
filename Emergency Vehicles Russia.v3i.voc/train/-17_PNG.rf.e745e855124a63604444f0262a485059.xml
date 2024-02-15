@@ -1,0 +1,66 @@
+<annotation>
+	<folder></folder>
+	<filename>-17_PNG.rf.e745e855124a63604444f0262a485059.jpg</filename>
+	<path>-17_PNG.rf.e745e855124a63604444f0262a485059.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>640</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>fire fighting vehicle</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>102</xmin>
+			<xmax>641</xmax>
+			<ymin>87</ymin>
+			<ymax>569</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>fire fighting vehicle</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>82</xmin>
+			<xmax>130</xmax>
+			<ymin>273</ymin>
+			<ymax>370</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>non emergency car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>13</xmin>
+			<xmax>53</xmax>
+			<ymin>322</ymin>
+			<ymax>369</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>non emergency car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>50</xmin>
+			<xmax>83</xmax>
+			<ymin>321</ymin>
+			<ymax>359</ymax>
+		</bndbox>
+	</object>
+</annotation>

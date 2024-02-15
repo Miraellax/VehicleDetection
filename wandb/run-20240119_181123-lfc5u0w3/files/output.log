@@ -1,0 +1,520 @@
+C:\Users\Alex\PycharmProjects\Cursach3\venv\lib\site-packages\pytorch_lightning\loggers\wandb.py:389: There is a wandb run already in progress and newly created instances of `WandbLogger` will reuse this run. If this is not desired, call `wandb.finish()` before instantiating `WandbLogger`.
+[34m[1mwandb[39m[22m: logging graph, to disable use `wandb.watch(log_graph=False)`
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+You are using a CUDA device ('NVIDIA GeForce RTX 3060') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+  | Name  | Type | Params
+-------------------------------
+0 | model | SSD  | 24.1 M
+-------------------------------
+24.1 M    Trainable params
+38.7 K    Non-trainable params
+24.1 M    Total params
+96.588    Total estimated model params size (MB)
+C:\Users\Alex\PycharmProjects\Cursach3\venv\lib\site-packages\lightning\pytorch\trainer\connectors\data_connector.py:441: The 'val_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=19` in the `DataLoader` to improve performance.
+<xml.etree.ElementTree.ElementTree object at 0x0000018F7F040970>
+<xml.etree.ElementTree.ElementTree object at 0x0000018F7F0748E0>
+<xml.etree.ElementTree.ElementTree object at 0x000001902A6A8250>
+(82, 112, 609, 608, 1)
+(37, 328, 86, 445, 3)
+torch.Size([3, 512, 512])
+<xml.etree.ElementTree.ElementTree object at 0x000001902A6A7820>
+(82, 112, 609, 608, 1)
+(37, 328, 86, 445, 3)
+torch.Size([3, 300, 300])
+<xml.etree.ElementTree.ElementTree object at 0x000001902A6B8910>
+(82, 112, 609, 608, 1)
+(37, 328, 86, 445, 3)
+torch.Size([3, 300, 300])
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+<xml.etree.ElementTree.ElementTree object at 0x000001902A6B8E80>
+(345, 210, 628, 577, 4)
+(96, 278, 176, 337, 3)
+(285, 274, 314, 333, 3)
+<xml.etree.ElementTree.ElementTree object at 0x000001902A657B80>
+(47, 2, 641, 641, 0)
+(485, 9, 548, 66, 3)
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+  | Name  | Type | Params
+-------------------------------
+0 | model | SSD  | 24.1 M
+-------------------------------
+24.1 M    Trainable params
+38.7 K    Non-trainable params
+24.1 M    Total params
+96.588    Total estimated model params size (MB)
+<xml.etree.ElementTree.ElementTree object at 0x00000190273CB6D0>
+(82, 112, 609, 608, 1)
+(37, 328, 86, 445, 3)
+torch.Size([3, 640, 640])
+<xml.etree.ElementTree.ElementTree object at 0x00000190273E2EE0>
+(246, 231, 421, 498, 2)
+<xml.etree.ElementTree.ElementTree object at 0x00000190273E2100>
+(123, 316, 337, 581, 4)
+(362, 310, 537, 473, 4)
+(56, 330, 123, 418, 3)
+<xml.etree.ElementTree.ElementTree object at 0x00000190273E2EE0>
+(24, 94, 469, 627, 1)
+(520, 240, 634, 411, 1)
+<xml.etree.ElementTree.ElementTree object at 0x00000190273E2100>
+(63, 325, 322, 596, 3)
+(340, 117, 621, 589, 0)
+(33, 277, 138, 412, 3)
+(261, 306, 359, 443, 3)
+<xml.etree.ElementTree.ElementTree object at 0x00000190273E2EE0>
+(183, 82, 518, 509, 2)
+<xml.etree.ElementTree.ElementTree object at 0x00000190273E2100>
+(112, 228, 408, 511, 2)
+<xml.etree.ElementTree.ElementTree object at 0x00000190273E2EE0>
+(154, 232, 264, 506, 2)
+<xml.etree.ElementTree.ElementTree object at 0x00000190273E2100>
+(1, 47, 639, 641, 0)
+(440, 97, 641, 462, 0)
+<xml.etree.ElementTree.ElementTree object at 0x000001902236FE50>
+(82, 112, 609, 608, 1)
+(37, 328, 86, 445, 3)
+torch.Size([3, 640, 640])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022352160>
+(280, 180, 529, 588, 4)
+(537, 368, 564, 393, 3)
+(594, 371, 611, 392, 3)
+(618, 368, 633, 394, 3)
+(103, 364, 126, 381, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022352160>
+(1, 45, 598, 641, 4)
+(504, 123, 614, 266, 3)
+(352, 129, 510, 259, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000018F7F050DC0>
+(328, 147, 594, 580, 2)
+torch.Size([1, 6, 20, 20])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022415970>
+(328, 147, 594, 580, 2)
+torch.Size([1, 6, 20, 20])
+<xml.etree.ElementTree.ElementTree object at 0x00000190224651F0>
+(328, 147, 594, 580, 2)
+tensor(0.9281) tensor(0.9062)
+torch.Size([1, 6, 20, 20])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022ABF1F0>
+(328, 147, 594, 580, 2)
+tensor(0.9281) tensor(0.9062)
+tensor(0.9281) tensor(0.9062)
+torch.Size([1, 6, 20, 20])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022ABF4C0>
+(328, 147, 594, 580, 2)
+tensor(0.9281) tensor(0.9062)
+tensor(0.9281) tensor(0.9062)
+tensor([[[[0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          ...,
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.]],
+         [[0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          ...,
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.]],
+         [[0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          ...,
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.]],
+         [[0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          ...,
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.]],
+         [[0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          ...,
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.]],
+         [[0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          ...,
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.],
+          [0., 0., 0.,  ..., 0., 0., 0.]]]])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022ABF2E0>
+(328, 147, 594, 580, 2)
+tensor(0.9281) tensor(0.9062)
+tensor(0.9281) tensor(0.9062)
+tensor([[[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         ...,
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.]],
+        [[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         ...,
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.]],
+        [[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         ...,
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.]],
+        [[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         ...,
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.]],
+        [[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         ...,
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.]],
+        [[0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         ...,
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.],
+         [0., 0., 0.,  ..., 0., 0., 0.]]])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022ABFA90>
+(328, 147, 594, 580, 2)
+tensor(0.9281) tensor(0.9062)
+tensor(0.9281) tensor(0.9062)
+tensor([[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 8., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.]])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022ABFF10>
+(328, 147, 594, 580, 2)
+tensor(0.9281) tensor(0.9062)
+tensor(0.9281) tensor(0.9062)
+tensor([[ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0., 19.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.],
+        [ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+          0.,  0.,  0.,  0.,  0.,  0.]])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022ABFDC0>
+(328, 147, 594, 580, 2)
+tensor(0.9281) tensor(0.9062)
+tensor(0.9281) tensor(0.9062)
+tensor([[0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 2., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0.]])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022ABF9A0>
+(328, 147, 594, 580, 2)
+tensor(0.9281) tensor(0.9062)
+tensor(0.9281) tensor(0.9062)
+torch.Size([1, 6, 20, 20])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022ABFB50>
+(82, 112, 609, 608, 1)
+(37, 328, 86, 445, 3)
+torch.Size([3, 640, 640])
+<xml.etree.ElementTree.ElementTree object at 0x00000190224746A0>
+(122, 91, 419, 336, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022474C10>
+(52, 105, 104, 179, 3)
+(242, 22, 310, 79, 3)
+(117, 409, 204, 541, 3)
+(231, 471, 334, 624, 3)
+<xml.etree.ElementTree.ElementTree object at 0x00000190224746A0>
+(63, 325, 322, 596, 3)
+(340, 117, 621, 589, 0)
+(33, 277, 138, 412, 3)
+(261, 306, 359, 443, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022474C10>
+(24, 94, 469, 627, 1)
+(520, 240, 634, 411, 1)
+<xml.etree.ElementTree.ElementTree object at 0x00000190224746A0>
+(2, 113, 432, 576, 0)
+(503, 179, 641, 440, 0)
+(360, 298, 458, 385, 3)
+(411, 288, 508, 374, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022428B80>
+(328, 147, 594, 580, 2)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022465160>
+(328, 147, 594, 580, 2)
+<xml.etree.ElementTree.ElementTree object at 0x000001902265E6D0>
+(328, 147, 594, 580, 2)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022480F10>
+(328, 147, 594, 580, 2)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022480520>
+(328, 147, 594, 580, 2)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022632D00>
+(82, 112, 609, 608, 1)
+(37, 328, 86, 445, 3)
+torch.Size([3, 640, 640])
+<xml.etree.ElementTree.ElementTree object at 0x000001902276C3A0>
+(264, 336, 350, 472, 4)
+(362, 317, 448, 440, 3)
+(478, 306, 577, 438, 3)
+(95, 344, 139, 408, 3)
+(168, 326, 200, 381, 3)
+(206, 328, 232, 372, 3)
+(335, 317, 382, 394, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022486CD0>
+(304, 188, 641, 450, 3)
+(1, 261, 147, 363, 3)
+(107, 254, 294, 404, 4)
+<xml.etree.ElementTree.ElementTree object at 0x000001902276CBB0>
+(7, 202, 307, 412, 4)
+(426, 174, 641, 437, 4)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022B96D00>
+<xml.etree.ElementTree.ElementTree object at 0x0000019022B6AA90>
+(328, 147, 594, 580, 2)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC08B0>
+(82, 112, 609, 608, 1)
+(37, 328, 86, 445, 3)
+torch.Size([3, 640, 640])
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC07C0>
+(210, 231, 494, 498, 0)
+(456, 275, 640, 458, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0670>
+(174, 196, 540, 494, 2)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC09A0>
+(293, 1, 640, 572, 0)
+(173, 142, 323, 415, 0)
+(38, 125, 182, 433, 0)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0970>
+(12, 265, 91, 391, 4)
+(429, 87, 524, 170, 3)
+(458, 143, 634, 282, 3)
+(428, 58, 522, 125, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0070>
+(65, 49, 221, 400, 2)
+(327, 272, 520, 527, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0190>
+(87, 170, 354, 612, 2)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0820>
+(290, 108, 621, 640, 1)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0A60>
+(104, 88, 629, 622, 4)
+(2, 144, 125, 408, 4)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0C70>
+(73, 452, 275, 596, 4)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC07C0>
+(228, 249, 399, 527, 4)
+(384, 315, 501, 512, 4)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0670>
+(1, 1, 432, 640, 2)
+(559, 258, 609, 286, 3)
+(480, 246, 524, 278, 3)
+(436, 246, 469, 281, 3)
+(389, 247, 442, 290, 3)
+(366, 258, 400, 291, 3)
+(375, 251, 417, 289, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC09A0>
+(1, 1, 640, 640, 1)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0970>
+(70, 158, 511, 626, 3)
+(480, 235, 639, 429, 3)
+(1, 227, 88, 395, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0070>
+(156, 315, 296, 564, 0)
+(128, 403, 160, 464, 3)
+(53, 372, 74, 479, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0190>
+(163, 54, 435, 548, 4)
+(438, 224, 571, 401, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022BC0820>
+(224, 295, 405, 552, 2)
+C:\Users\Alex\PycharmProjects\Cursach3\venv\lib\site-packages\pytorch_lightning\loggers\wandb.py:389: There is a wandb run already in progress and newly created instances of `WandbLogger` will reuse this run. If this is not desired, call `wandb.finish()` before instantiating `WandbLogger`.
+[34m[1mwandb[39m[22m: logging graph, to disable use `wandb.watch(log_graph=False)`
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+  | Name  | Type | Params
+-------------------------------
+0 | model | SSD  | 24.1 M
+-------------------------------
+24.1 M    Trainable params
+38.7 K    Non-trainable params
+24.1 M    Total params
+96.588    Total estimated model params size (MB)
+C:\Users\Alex\PycharmProjects\Cursach3\venv\lib\site-packages\lightning\pytorch\trainer\connectors\data_connector.py:441: The 'val_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=19` in the `DataLoader` to improve performance.
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1BA60>
+(345, 210, 628, 577, 4)
+(96, 278, 176, 337, 3)
+(285, 274, 314, 333, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B670>
+(47, 2, 640, 640, 0)
+(485, 9, 548, 66, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B7F0>
+(290, 229, 444, 629, 1)
+(446, 37, 485, 113, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B910>
+(16, 96, 322, 556, 0)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B730>
+(252, 205, 584, 453, 1)
+(51, 212, 207, 432, 1)
+(491, 322, 617, 466, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B5B0>
+(135, 33, 640, 640, 4)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1BC10>
+(306, 306, 385, 395, 3)
+(54, 214, 333, 493, 1)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B880>
+(130, 122, 494, 640, 3)
+(1, 272, 40, 421, 3)
+(93, 291, 133, 366, 3)
+(584, 319, 640, 451, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B8B0>
+(1, 55, 347, 527, 1)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1BA60>
+(146, 51, 620, 556, 4)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B670>
+(196, 145, 485, 442, 1)
+(509, 276, 551, 318, 3)
+(554, 269, 594, 304, 3)
+(473, 277, 507, 319, 3)
+(590, 270, 623, 301, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1BA60>
+(1, 209, 417, 640, 3)
+(1, 5, 437, 408, 3)
+(412, 32, 629, 368, 1)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B910>
+(131, 177, 385, 518, 4)
+(73, 334, 111, 386, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B730>
+(188, 94, 640, 640, 4)
+(34, 451, 60, 487, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1B5B0>
+(234, 154, 435, 358, 3)
+(165, 137, 288, 254, 3)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1BC10>
+(266, 199, 640, 640, 3)
+(51, 1, 526, 575, 0)
+<xml.etree.ElementTree.ElementTree object at 0x0000019022C1C640>
+(328, 147, 594, 580, 2)
+torch.Size([1, 6, 20, 20])
+torch.Size([3, 512, 512])

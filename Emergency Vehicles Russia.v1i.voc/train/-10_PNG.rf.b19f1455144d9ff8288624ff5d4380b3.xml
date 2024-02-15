@@ -1,0 +1,40 @@
+<annotation>
+	<folder></folder>
+	<filename>-10_PNG.rf.b19f1455144d9ff8288624ff5d4380b3.jpg</filename>
+	<path>-10_PNG.rf.b19f1455144d9ff8288624ff5d4380b3.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>360</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>fire fighting vehicle</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>83</xmin>
+			<xmax>610</xmax>
+			<ymin>64</ymin>
+			<ymax>343</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>non emergency car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>37</xmin>
+			<xmax>85</xmax>
+			<ymin>186</ymin>
+			<ymax>251</ymax>
+		</bndbox>
+	</object>
+</annotation>

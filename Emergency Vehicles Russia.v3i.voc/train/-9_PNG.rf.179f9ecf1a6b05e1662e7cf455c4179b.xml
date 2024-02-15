@@ -1,0 +1,27 @@
+<annotation>
+	<folder></folder>
+	<filename>-9_PNG.rf.179f9ecf1a6b05e1662e7cf455c4179b.jpg</filename>
+	<path>-9_PNG.rf.179f9ecf1a6b05e1662e7cf455c4179b.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>640</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>intensive care unit</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>32</xmin>
+			<xmax>432</xmax>
+			<ymin>47</ymin>
+			<ymax>641</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,16 @@
+names:
+- ambulance
+- fire fighting vehicle
+- intensive care unit
+- non emergency car
+- police car
+nc: 5
+roboflow:
+  license: CC BY 4.0
+  project: emergency-vehicles-russia
+  url: https://universe.roboflow.com/emergency-vehicles-russia/emergency-vehicles-russia/dataset/3
+  version: 3
+  workspace: emergency-vehicles-russia
+test: ../test/images
+train: ../train/images
+val: ../valid/images

@@ -1,0 +1,40 @@
+2024-01-19 19:03:29,550 INFO    MainThread:18348 [wandb_setup.py:_flush():76] Current SDK version is 0.16.2
+2024-01-19 19:03:29,550 INFO    MainThread:18348 [wandb_setup.py:_flush():76] Configure stats pid to 18348
+2024-01-19 19:03:29,550 INFO    MainThread:18348 [wandb_setup.py:_flush():76] Loading settings from C:\Users\Alex\.config\wandb\settings
+2024-01-19 19:03:29,550 INFO    MainThread:18348 [wandb_setup.py:_flush():76] Loading settings from C:\Users\Alex\PycharmProjects\Cursach3\wandb\settings
+2024-01-19 19:03:29,551 INFO    MainThread:18348 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2024-01-19 19:03:29,551 INFO    MainThread:18348 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-01-19 19:03:29,552 INFO    MainThread:18348 [wandb_init.py:_log_setup():526] Logging user logs to C:\Users\Alex\PycharmProjects\Cursach3\wandb\run-20240119_190329-8lru0xw2\logs\debug.log
+2024-01-19 19:03:29,552 INFO    MainThread:18348 [wandb_init.py:_log_setup():527] Logging internal logs to C:\Users\Alex\PycharmProjects\Cursach3\wandb\run-20240119_190329-8lru0xw2\logs\debug-internal.log
+2024-01-19 19:03:29,553 INFO    MainThread:18348 [wandb_init.py:init():566] calling init triggers
+2024-01-19 19:03:29,553 INFO    MainThread:18348 [wandb_init.py:init():573] wandb.init called with sweep_config: {}
+config: {}
+2024-01-19 19:03:29,553 INFO    MainThread:18348 [wandb_init.py:init():591] re-initializing run, found existing run on stack: lfc5u0w3
+2024-01-19 19:03:29,559 INFO    MainThread:18348 [wandb_run.py:_finish():1962] finishing run miraellax/Emergency_Cars/lfc5u0w3
+2024-01-19 19:03:29,560 INFO    MainThread:18348 [jupyter.py:save_history():445] not saving jupyter history
+2024-01-19 19:03:29,560 INFO    MainThread:18348 [jupyter.py:save_ipynb():373] not saving jupyter notebook
+2024-01-19 19:03:29,561 INFO    MainThread:18348 [wandb_init.py:_jupyter_teardown():454] cleaning up jupyter logic
+2024-01-19 19:03:29,561 INFO    MainThread:18348 [wandb_run.py:_atexit_cleanup():2202] got exitcode: 0
+2024-01-19 19:03:29,562 INFO    MainThread:18348 [wandb_run.py:_restore():2185] restore
+2024-01-19 19:03:29,563 INFO    MainThread:18348 [wandb_run.py:_restore():2191] restore done
+2024-01-19 19:03:37,321 INFO    MainThread:18348 [wandb_run.py:_footer_history_summary_info():3857] rendering history
+2024-01-19 19:03:37,322 INFO    MainThread:18348 [wandb_run.py:_footer_history_summary_info():3889] rendering summary
+2024-01-19 19:03:37,356 INFO    MainThread:18348 [wandb_run.py:_footer_sync_info():3816] logging synced files
+2024-01-19 19:03:38,005 INFO    MainThread:18348 [wandb_init.py:init():616] starting backend
+2024-01-19 19:03:38,005 INFO    MainThread:18348 [wandb_init.py:init():620] setting up manager
+2024-01-19 19:03:38,020 INFO    MainThread:18348 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=spawn, using: spawn
+2024-01-19 19:03:38,026 INFO    MainThread:18348 [wandb_init.py:init():628] backend started and connected
+2024-01-19 19:03:38,075 INFO    MainThread:18348 [wandb_run.py:_label_probe_notebook():1294] probe notebook
+2024-01-19 19:03:38,096 INFO    MainThread:18348 [wandb_init.py:init():720] updated telemetry
+2024-01-19 19:03:38,098 INFO    MainThread:18348 [wandb_init.py:init():753] communicating run to backend with 90.0 second timeout
+2024-01-19 19:03:39,131 INFO    MainThread:18348 [wandb_run.py:_on_init():2254] communicating current version
+2024-01-19 19:03:39,943 INFO    MainThread:18348 [wandb_run.py:_on_init():2263] got version response 
+2024-01-19 19:03:39,944 INFO    MainThread:18348 [wandb_init.py:init():804] starting run threads in backend
+2024-01-19 19:03:40,133 INFO    MainThread:18348 [wandb_run.py:_console_start():2233] atexit reg
+2024-01-19 19:03:40,135 INFO    MainThread:18348 [wandb_run.py:_redirect():2088] redirect: wrap_raw
+2024-01-19 19:03:40,136 INFO    MainThread:18348 [wandb_run.py:_redirect():2153] Wrapping output streams.
+2024-01-19 19:03:40,136 INFO    MainThread:18348 [wandb_run.py:_redirect():2178] Redirects installed.
+2024-01-19 19:03:40,138 INFO    MainThread:18348 [wandb_init.py:init():847] run started, returning control to user process
+2024-01-19 19:04:23,167 INFO    MainThread:18348 [wandb_watch.py:watch():51] Watching
+2024-01-19 20:06:32,007 INFO    MainThread:18348 [wandb_watch.py:watch():51] Watching
+2024-01-20 00:11:16,105 WARNING MsgRouterThr:18348 [router.py:message_loop():77] message_loop has been closed

@@ -1,0 +1,40 @@
+<annotation>
+	<folder></folder>
+	<filename>bcf155fd-_40_PNG.rf.cb0161957dacab1198c211408e097ba4.jpg</filename>
+	<path>bcf155fd-_40_PNG.rf.cb0161957dacab1198c211408e097ba4.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>359</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>police car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>150</xmin>
+			<xmax>372</xmax>
+			<ymin>162</ymin>
+			<ymax>305</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>non emergency car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>341</xmin>
+			<xmax>389</xmax>
+			<ymin>186</ymin>
+			<ymax>218</ymax>
+		</bndbox>
+	</object>
+</annotation>

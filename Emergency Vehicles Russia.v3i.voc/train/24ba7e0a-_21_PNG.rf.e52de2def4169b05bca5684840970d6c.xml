@@ -1,0 +1,53 @@
+<annotation>
+	<folder></folder>
+	<filename>24ba7e0a-_21_PNG.rf.e52de2def4169b05bca5684840970d6c.jpg</filename>
+	<path>24ba7e0a-_21_PNG.rf.e52de2def4169b05bca5684840970d6c.jpg</path>
+	<source>
+		<database>roboflow.com</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>640</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>ambulance</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>394</xmin>
+			<xmax>555</xmax>
+			<ymin>152</ymin>
+			<ymax>493</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>non emergency car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>118</xmin>
+			<xmax>222</xmax>
+			<ymin>246</ymin>
+			<ymax>325</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>non emergency car</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<occluded>0</occluded>
+		<bndbox>
+			<xmin>586</xmin>
+			<xmax>639</xmax>
+			<ymin>250</ymin>
+			<ymax>305</ymax>
+		</bndbox>
+	</object>
+</annotation>
