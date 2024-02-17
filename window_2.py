@@ -1,20 +1,21 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QPalette
-from PyQt5.QtWidgets import QMainWindow, QLabel, QHBoxLayout, QToolButton, QStyle
+from PyQt5.QtWidgets import QLabel, QHBoxLayout, QToolButton, QStyle
 
 
 class CustomTitleBar(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__(parent)
-        self.minWidth = 100
+        self.setMinimumWidth(100)
+        self.setMinimumHeight(20)
+
         self.setAutoFillBackground(True)
-        self.setBackgroundRole(QPalette.ColorRole.Highlight)
         self.initial_pos = None
 
-        title_bar_layout = QtWidgets.QHBoxLayout()
+        title_bar_layout = QtWidgets.QHBoxLayout(self)
         # self.setLayout(title_bar_layout)
-        # title_bar_layout.setContentsMargins(1, 1, 1, 1)
+        title_bar_layout.setContentsMargins(1, 1, 1, 1)
         # title_bar_layout.setSpacing(2)
 
         # Placeholder for a title
@@ -22,9 +23,9 @@ class CustomTitleBar(QtWidgets.QWidget):
         # self.title = QLabel("")
         self.title.setStyleSheet(
             """font-weight: bold;
-               border: 2px solid black;
                border-radius: 12px;
                margin: 2px;
+               color: black;
             """
         )
         self.title.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -42,32 +43,36 @@ class CustomTitleBar(QtWidgets.QWidget):
         self.min_button.setIcon(min_icon)
         self.min_button.clicked.connect(self.window().showMinimized)
 
-        # # Max button
-        # self.max_button = QToolButton(self)
-        # max_icon = self.style().standardIcon(
-        #     QStyle.StandardPixmap.SP_TitleBarMaxButton
-        # )
-        # self.max_button.setIcon(max_icon)
-        # self.max_button.clicked.connect(self.window().showMaximized)
-
         # Close button
         self.close_button = QToolButton(self)
         close_icon = self.style().standardIcon(
             QStyle.StandardPixmap.SP_TitleBarCloseButton
         )
         self.close_button.setIcon(close_icon)
-        self.close_button.clicked.connect(self.window().close)
+        self.close_button.clicked.connect(self.parentWidget().close)
 
-        # # Normal button
-        # self.normal_button = QToolButton(self)
-        # normal_icon = self.style().standardIcon(
-        #     QStyle.StandardPixmap.SP_TitleBarNormalButton
-        # )
-        # self.normal_button.setIcon(normal_icon)
-        # self.normal_button.clicked.connect(self.window().showNormal)
-        # self.normal_button.setVisible(False)
-        print("tiiit", self.geometry())
-        print("tiiit frame", self.frameGeometry())
+        buttons = [
+            self.min_button,
+            self.close_button,
+        ]
+        for button in buttons:
+            button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            button.setFixedSize(QSize(self.minimumHeight()-4, self.minimumHeight()-4))
+            button.setStyleSheet(
+                """QToolButton { border: 2px solid black;
+                                 border-radius: 3px;
+                                }
+                """
+            )
+            title_bar_layout.addWidget(button)
+
+    def mousePressEvent(self, evt):
+        self.parentWidget().oldPos = evt.globalPos()
+
+    def mouseMoveEvent(self, evt):
+        delta = QtCore.QPoint(evt.globalPos() - self.parentWidget().oldPos)
+        self.parentWidget().move(self.parentWidget().x() + delta.x(), self.parentWidget().y() + delta.y())
+        self.parentWidget().oldPos = evt.globalPos()
 
 
 class DetectionWindow(QtWidgets.QWidget):
@@ -80,8 +85,6 @@ class DetectionWindow(QtWidgets.QWidget):
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
 
         self.title_bar = CustomTitleBar(self)
-        print(self.title_bar.geometry())
-        print(self.title_bar.frameGeometry())
 
         # Creating vertical layout to hold inner interface elements
         layout = QtWidgets.QVBoxLayout()
@@ -94,12 +97,12 @@ class DetectionWindow(QtWidgets.QWidget):
         layout.setSpacing(0)
 
         # Create custom title bar
-        layout.addWidget(self.title_bar)
+        self.layout().addWidget(self.title_bar)
 
         # create a "placeholder" widget for the screen grab geometry
         self.grabWidget = QtWidgets.QWidget()
         self.grabWidget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        self.grabWidget.setMinimumSize(self.title_bar.minWidth, 40)
+        self.grabWidget.setMinimumSize(self.title_bar.minimumWidth(), 40)
 
         # debug
         self.grabWidget.setAutoFillBackground(True)
@@ -109,12 +112,8 @@ class DetectionWindow(QtWidgets.QWidget):
             """
         )
         layout.addWidget(self.grabWidget)
-        print(self.title_bar.geometry())
-        print(self.title_bar.frameGeometry())
         # Margins for frame to resize correctly
-        self.setContentsMargins(1, 1, 1, 1)
-        print(self.title_bar.geometry())
-        print(self.title_bar.frameGeometry())
+        self.setContentsMargins(2, 2, 2, 2)
 
 
 
@@ -132,51 +131,47 @@ class DetectionWindow(QtWidgets.QWidget):
 
     def updateMask(self):
 
-        print("self.grabWidget.geometry()", self.grabWidget.geometry())
-        print("self.grabWidget.frameGeometry()", self.grabWidget.frameGeometry())
-        print("self.geometry()", self.geometry())
-        print("self.frameGeometry()", self.frameGeometry())
-        print("self.title_bar.geometry()", self.title_bar.geometry())
-        print("self.title_bar.frameGeometry()", self.title_bar.frameGeometry())
-        print("self.pos()", self.pos())
+        # print("self.grabWidget.frameGeometry()", self.grabWidget.frameGeometry())
+        # print("self.frameGeometry()", self.frameGeometry())
+        # print("self.title_bar.frameGeometry()", self.title_bar.frameGeometry())
+        # print("self.pos()", self.pos())
+        # print(self.frameGeometry().getRect())
+        # print(self.title_bar.frameGeometry().getRect())
+        # print(self.grabWidget.frameGeometry().getRect())
 
         # get the *whole* window geometry, including its titlebar and borders
         frameRect = self.frameGeometry()
-        print("frame", frameRect)
 
-        # get the grabWidget geometry and remap it to global coordinates
-        grabGeometry = self.grabWidget.geometry()
-        grabGeometry.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
-        print("grab zeroed", grabGeometry)
+        # get the child widgets geometry and remap it to global coordinates
         titlebarG = self.title_bar.geometry()
         titlebarG.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
-        print("titlebar zeroed", titlebarG)
+        h2 = self.grabWidget.geometry()
+        grabGeometry= self.grabWidget.geometry()
+        grabGeometry.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
+
 
         # get the actual margins between the grabWidget and the window margins
         left = frameRect.left() - grabGeometry.left()
-        top = frameRect.top() - grabGeometry.top() + titlebarG.height()
+        top = frameRect.top() - grabGeometry.top()
         right = frameRect.right() - grabGeometry.right()
         bottom = frameRect.bottom() - grabGeometry.bottom()
+        print(left, top, right, bottom)
 
-        # Keep custom title bar rendering
-
-
-        # reset the geometries to get "0-point" rectangles for the mask
+        # reset the geometries to get rectangles for the mask
         frameRect.moveTopLeft(QtCore.QPoint(0, 0))
-        grabGeometry.moveTopLeft(QtCore.QPoint(0, 0))
         titlebarG.moveTopLeft(QtCore.QPoint(0, 0))
+        grabGeometry.moveTopLeft(QtCore.QPoint(self.contentsMargins().top(), self.contentsMargins().left()))
+        grabGeometry.moveTop(titlebarG.bottom()+self.contentsMargins().top())
 
         # create the base mask region, adjusted to the margins between the
         # grabWidget and the window as computed above
         region = QtGui.QRegion(frameRect.adjusted(left, top, right, bottom))
+        # a = frameRect
+        region = QtGui.QRegion(region)
         # "subtract" the grabWidget rectangle to get a mask that only contains
-        # the window titlebar, margins and panel
+        # the window titlebar and margins
         region -= QtGui.QRegion(grabGeometry)
         self.setMask(region)
-
-        # # update the grab size according to grabWidget geometry
-        # self.widthLabel.setText(str(self.grabWidget.width()))
-        # self.heightLabel.setText(str(self.grabWidget.height()))
 
     def resizeEvent(self, event):
         super(DetectionWindow, self).resizeEvent(event)
@@ -207,8 +202,6 @@ class DetectionWindow(QtWidgets.QWidget):
 if __name__ == '__main__':
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    # app.setStyle('Windows')
-    # app.setStyle('windowsvista')
     app.setStyle('Fusion')
     window = DetectionWindow()
     window.show()
