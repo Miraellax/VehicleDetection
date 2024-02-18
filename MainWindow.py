@@ -1,13 +1,31 @@
+import math
+
+import PIL
+import numpy as np
+from torchvision import transforms
+from torchvision.transforms.v2 import Compose
 import yaml
+import logging
+import asyncio
+
+from PIL import ImageQt
+from PIL import Image
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QToolButton, QStyle
+
 import CustomTitleBar
+import ECModel
+
 
 # def InitSettings():
 #     with open("./settings", )
-def ReadClassDict(path):
+def read_class_dict(path: str) -> tuple:
+    """
+
+    :type path: str
+    """
     with open(path, "r") as f:
         file = yaml.safe_load(f)
         class_list = file["names"]
@@ -20,14 +38,17 @@ def ReadClassDict(path):
 
     return class_dict, class_dict_colors
 
+
 class DetectionWindow(QtWidgets.QWidget):
     def __init__(self):
         super(DetectionWindow, self).__init__()
         self.dirty = True
         self.setWindowTitle('ECDetector')
 
-        data_path = "./Emergency Vehicles Russia.v3i.yolov8"
-        self.objectClassesDict, self.objectColorsDict = ReadClassDict("./" + data_path + "/data.yaml")
+        dict_path = "./Emergency Vehicles Russia.v3i.yolov8"
+        self.objectClassesDict, self.objectColorsDict = read_class_dict("./" + dict_path + "/data.yaml")
+
+        self.model = ECModel.ECModel()
 
         self.currentFrameColor = -1
         self.multipleClasses = False
@@ -63,89 +84,104 @@ class DetectionWindow(QtWidgets.QWidget):
             """
         )
         layout.addWidget(self.grabWidget)
+
         # Margins for frame to resize correctly
         self.setContentsMargins(2, 2, 2, 2)
 
     # TODO
-    def setFrameColor(self, objectClass, multipleClasses=False):
-        # Set frame color if car is detected or other signal sent
+    def set_frame_color(self, object_class: object, multiple_classes: object = False) -> object:
+        """
+        Set frame color if car is detected or other signal sent
+        :param object_class:
+        :param multiple_classes:
+        :return:
+        """
+        frame_palette = self.palette()
 
-        framePalette = self.palette()
-
-        if objectClass == self.currentFrameColor:
+        if object_class == self.currentFrameColor:
             return
 
-        if objectClass == -1:
-            framePalette.setColor(self.backgroundRole(), getattr(Qt, "gray"))
+        if object_class == -1:
+            frame_palette.setColor(self.backgroundRole(), getattr(Qt, "gray"))
 
-        if multipleClasses:
+        if multiple_classes:
             # TODO поддержка нескольких объектов в кадре - смена цвета,
-            #  приоритеты цветов, красить в несколько фон?
+            #  приоритеты цветов (class asyncio.PriorityQueue), красить в несколько фон?
 
-            color = self.objectColorsDict[objectClass]
+            color = self.objectColorsDict[object_class]
             try:
-                framePalette.setColor(self.backgroundRole(), getattr(Qt, color))
+                frame_palette.setColor(self.backgroundRole(), getattr(Qt, color))
             except AttributeError:
-                print(f"Attribute error, color {color} for {objectClass} does not exist.")
+                print(f"Attribute error, color {color} for {object_class} does not exist.")
         #         log in error logs
-
 
         # Single class - emergency car
         else:
             color = "red"
-            framePalette.setColor(self.backgroundRole(), getattr(Qt, color))
-        self.setPalette(framePalette)
+            frame_palette.setColor(self.backgroundRole(), getattr(Qt, color))
+        self.setPalette(frame_palette)
 
-    def takeScreenshot(self):
+    def take_screenshot(self):
         # TODO учитывать наличие нескольких экранов
         print("Screen")
         screen = QtWidgets.QApplication.primaryScreen()
-        screenZone = self.grabWidget.geometry()
-        screenZone.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
-        screenZone = screenZone.getRect()
+        screen_zone = self.grabWidget.geometry()
+        screen_zone.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
+        screen_zone = screen_zone.getRect()
         # will not work on IOS?
         screenshot = screen.grabWindow(
                                            0,  # window voidptr
-                                           screenZone[0],  # x
-                                           screenZone[1],  # y
-                                           screenZone[2],  # width
-                                           screenZone[3],  # height
+                                           screen_zone[0],  # x
+                                           screen_zone[1],  # y
+                                           screen_zone[2],  # width
+                                           screen_zone[3],  # height
                                        )
         screenshot.save('shot.jpg', 'jpg')
         print(screenshot.size())
         return screenshot
 
-    def updateMask(self):
+    def predict(self):
+        image = self.take_screenshot().toImage()
+        channels = 3
+        s = image.bits().asstring(image.width() * image.height() * channels)
+        image_array = np.fromstring(s, dtype=np.uint8).reshape((image.height(), image.width(), channels))
+        # pil_image = Image.frombytes("RGB", (image.width(), image.height()), image)
+        # pil_image = ImageQt.fromqimage(image)
+        result = self.model.predict(image_array)
+        print(result)
 
-        # get the *whole* window geometry, including its titlebar and borders
-        frameRect = self.frameGeometry()
+
+
+
+    def update_mask(self):
+        # get the *whole* window geometry, including borders
+        frame_rect = self.frameGeometry()
 
         # get the child widgets geometry and remap it to global coordinates
-        titlebarG = self.title_bar.geometry()
-        titlebarG.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
-        grabGeometry= self.grabWidget.geometry()
-        grabGeometry.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
-
+        titlebar_geometry = self.title_bar.geometry()
+        titlebar_geometry.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
+        grab_geometry = self.grabWidget.geometry()
+        grab_geometry.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
 
         # get the actual margins between the grabWidget and the window margins
-        left = frameRect.left() - grabGeometry.left()
-        top = frameRect.top() - grabGeometry.top()
-        right = frameRect.right() - grabGeometry.right()
-        bottom = frameRect.bottom() - grabGeometry.bottom()
+        left = frame_rect.left() - grab_geometry.left()
+        top = frame_rect.top() - grab_geometry.top()
+        right = frame_rect.right() - grab_geometry.right()
+        bottom = frame_rect.bottom() - grab_geometry.bottom()
 
         # reset the geometries to get rectangles for the mask
-        frameRect.moveTopLeft(QtCore.QPoint(0, 0))
-        titlebarG.moveTopLeft(QtCore.QPoint(0, 0))
-        grabGeometry.moveTopLeft(QtCore.QPoint(self.contentsMargins().top(), self.contentsMargins().left()))
-        grabGeometry.moveTop(titlebarG.bottom()+self.contentsMargins().top()+1)
+        frame_rect.moveTopLeft(QtCore.QPoint(0, 0))
+        titlebar_geometry.moveTopLeft(QtCore.QPoint(0, 0))
+        grab_geometry.moveTopLeft(QtCore.QPoint(self.contentsMargins().top(), self.contentsMargins().left()))
+        grab_geometry.moveTop(titlebar_geometry.bottom()+self.contentsMargins().top()+1)
 
         # create the base mask region, adjusted to the margins between the
         # grabWidget and the window as computed above
-        region = QtGui.QRegion(frameRect.adjusted(left, top, right, bottom))
+        region = QtGui.QRegion(frame_rect.adjusted(left, top, right, bottom))
 
         # "subtract" the grabWidget rectangle to get a mask that only contains
         # the window titlebar and margins
-        region -= QtGui.QRegion(grabGeometry)
+        region -= QtGui.QRegion(grab_geometry)
         self.setMask(region)
 
     def resizeEvent(self, event):
@@ -153,12 +189,12 @@ class DetectionWindow(QtWidgets.QWidget):
         # the first resizeEvent is called *before* any first-time showEvent and
         # paintEvent, there's no need to update the mask until then
         if not self.dirty:
-            self.updateMask()
+            self.update_mask()
 
     def paintEvent(self, event):
         super(DetectionWindow, self).paintEvent(event)
         if self.dirty:
-            self.updateMask()
+            self.update_mask()
             self.dirty = False
 
 
@@ -168,8 +204,8 @@ if __name__ == '__main__':
     app.setStyle('Fusion')
     window = DetectionWindow()
     window.show()
-    window.setFrameColor(2, True)
+    window.set_frame_color(2, True)
 
     data_path = "./Emergency Vehicles Russia.v3i.yolov8"
-    ReadClassDict("./" + data_path + "/data.yaml")
+    read_class_dict("./" + data_path + "/data.yaml")
     sys.exit(app.exec_())

@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QToolButton, QStyle
 
+
 class CustomTitleBar(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__(parent)
@@ -37,7 +38,7 @@ class CustomTitleBar(QtWidgets.QWidget):
             QStyle.StandardPixmap.SP_FileIcon
         )
         self.screen_button.setIcon(screen_icon)
-        self.screen_button.clicked.connect(self.parentWidget().takeScreenshot)
+        self.screen_button.clicked.connect(self.parentWidget().predict)
 
         # Min button
         self.min_button = QToolButton(self)
@@ -62,7 +63,7 @@ class CustomTitleBar(QtWidgets.QWidget):
         ]
         for button in buttons:
             button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-            button.setFixedSize(QSize(self.minimumHeight()-4, self.minimumHeight()-4))
+            button.setFixedSize(QSize(self.minimumHeight() - 4, self.minimumHeight() - 4))
             button.setStyleSheet(
                 """QToolButton {
                                  background-color: white;
