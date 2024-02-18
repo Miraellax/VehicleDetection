@@ -4,6 +4,7 @@ test: ../test/images
 
 nc: 5
 names: ['ambulance', 'fire fighting vehicle', 'intensive care unit', 'non emergency car', 'police car']
+colors: ['green', 'red', 'yellow', 'gray', 'blue']
 
 roboflow:
   workspace: emergency-vehicles-russia
