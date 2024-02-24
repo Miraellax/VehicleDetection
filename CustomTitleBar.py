@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QPalette
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QToolButton, QStyle
+from PyQt5.QtWidgets import QLabel, QHBoxLayout, QToolButton, QStyle, QToolTip
 
 
 class CustomTitleBar(QtWidgets.QWidget):
@@ -31,6 +31,19 @@ class CustomTitleBar(QtWidgets.QWidget):
         if title := parent.windowTitle():
             self.title.setText(title)
         title_bar_layout.addWidget(self.title)
+        
+        self.model_indicator = QToolButton(self)
+        warning_icon = self.style().standardIcon(
+            QStyle.StandardPixmap.SP_MessageBoxWarning
+        )
+        self.model_indicator.setIcon(warning_icon)
+        self.model_indicator.setToolTip("<b>WARNING:</b> model is not loaded")
+        self.model_indicator.setFixedSize(QSize(self.minimumHeight() - 2, self.minimumHeight() - 2))
+        title_bar_layout.addWidget(self.model_indicator)
+
+        self.setStyleSheet("""QToolTip {  
+                                           color: red;
+                                       }""")
 
         # debug screenshot button
         self.screen_button = QToolButton(self)
@@ -38,7 +51,7 @@ class CustomTitleBar(QtWidgets.QWidget):
             QStyle.StandardPixmap.SP_FileIcon
         )
         self.screen_button.setIcon(screen_icon)
-        self.screen_button.clicked.connect(self.parentWidget().predict)
+        self.screen_button.clicked.connect(self.parentWidget().take_screenshot)
 
         # Min button
         self.min_button = QToolButton(self)
