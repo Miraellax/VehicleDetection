@@ -15,6 +15,7 @@ from PyQt5.QtCore import Qt, QSize, QBuffer, QTimer, QObject, QThread, pyqtSigna
 
 import CustomTitleBar
 import ECModel
+import BBoxWidget
 
 logging.basicConfig(format='"%(asctime)s [%(levelname)s] %(name)s: %(message)s"',
                     filename='Main.log',
@@ -35,7 +36,6 @@ mutex = QMutex()
 #     with open("./settings", )
 def read_class_dict(path: str) -> tuple:
     """
-
     :type path: str
     """
     with open(path, "r") as f:
@@ -52,6 +52,8 @@ def read_class_dict(path: str) -> tuple:
 
 
 class DetectionWindow(QtWidgets.QWidget):
+    timer_signal = pyqtSignal()
+
     def __init__(self):
         super(DetectionWindow, self).__init__()
         self.dirty = True
@@ -62,8 +64,13 @@ class DetectionWindow(QtWidgets.QWidget):
         dict_path = "./Emergency Vehicles Russia.v3i.yolov8"
         self.objectClassesDict, self.objectColorsDict = read_class_dict("./" + dict_path + "/data.yaml")
 
+        # init model and model thread
         self.model = None
+        self.timer = QTimer(self, interval=1000 // self.fps_check, timeout=self.handle_timeout)
         self.run_thread_init_task()
+
+        # list for bbox frames to include in mask
+        self.bbox_widgets = []
 
         self.currentFrameColor = -1
         self.multipleClasses = False
@@ -103,19 +110,37 @@ class DetectionWindow(QtWidgets.QWidget):
         # Margins for frame to resize correctly
         self.setContentsMargins(2, 2, 2, 2)
 
-        # Check bboxes for predictions TODO
-        timer = QTimer(self, interval=1000 // self.fps_check, timeout=self.handle_timeout)
-        timer.start()
-        self.handle_timeout()
-
     def handle_timeout(self):
+        # some logic and start image processing in model thread
+        self.timer_signal.emit()
+
+        # debug
+        print("TIMER")
+
+
+    def check_bboxes(self):
         global current_bboxes
+
+        # threading, check if model bboxes are ready and can be visualized
+        if current_bboxes is None:
+            logging.info("Main: Tried to check bboxes, but they are None type")
+            print("Main: Tried to check bboxes, but they are None type")
+            return
+
+        if len(current_bboxes) == 0:
+            logging.info("Main: Tried to check bboxes, but there are no bboxes")
+            print("Main: Tried to check bboxes, but there are no bboxes")
+            self.update_mask()
+            return
 
         # if answers ready - visualise
         if mutex.tryLock():
             logging.info("Main: locked bboxes, updating interface")
             print("Main: locked bboxes, updating interface")
-            self.check_bboxes()
+
+            print("BEBOXES good")
+            self.update_mask()
+
             logging.info("Main: unlocking bboxes")
             print("Main: unlocking bboxes")
             mutex.unlock()
@@ -123,19 +148,12 @@ class DetectionWindow(QtWidgets.QWidget):
     def show_model_init_error(self):
         pass
 
-    def check_bboxes(self):
-        # threading, check if model bboxes are ready and can be visualized
-        if current_bboxes is None:
-            logging.info("Main: Tried to check bboxes, but they are None type")
-            print("Main: Tried to check bboxes, but they are None type")
-            return
-
-        print("BEBOXES good")
-        self.update_mask()
-
+    def set_model_threshold(self, new_threshold: float):
+        if new_threshold >= 0 and new_threshold <= 1:
+            self.model.threshold = new_threshold
 
     # TODO
-    def set_frame_color(self, object_class: object, multiple_classes: object = False) -> object:
+    def set_frame_color(self, object_class: int, multiple_classes: bool = False) -> object:
         """
         Set frame color if car is detected or other signal sent
         :param object_class:
@@ -144,11 +162,14 @@ class DetectionWindow(QtWidgets.QWidget):
         """
         frame_palette = self.palette()
 
-        if object_class == self.currentFrameColor:
+        if object_class != -1 and object_class == self.currentFrameColor:
             return
 
         if object_class == -1:
             frame_palette.setColor(self.backgroundRole(), getattr(Qt, "gray"))
+            self.title_bar.set_color("gray")
+            self.setPalette(frame_palette)
+            return
 
         if multiple_classes:
             # TODO поддержка нескольких объектов в кадре - смена цвета,
@@ -157,14 +178,16 @@ class DetectionWindow(QtWidgets.QWidget):
             color = self.objectColorsDict[object_class]
             try:
                 frame_palette.setColor(self.backgroundRole(), getattr(Qt, color))
+                self.title_bar.set_color(color)
             except AttributeError:
-                print(f"Attribute error, color {color} for {object_class} does not exist.")
+                print(f"Attribute error, color {color} for {object_class} class does not exist.")
         #         log in error logs
 
         # Single class - emergency car
         else:
             color = "red"
             frame_palette.setColor(self.backgroundRole(), getattr(Qt, color))
+            self.title_bar.set_color(color)
         self.setPalette(frame_palette)
 
     def take_screenshot(self):
@@ -188,8 +211,6 @@ class DetectionWindow(QtWidgets.QWidget):
         return screenshot
 
     def send_to_predict(self, image):
-        # image = self.take_screenshot().toImage()
-
         # convert Qpixmap to PIL
         buffer = QBuffer()
         buffer.open(QBuffer.ReadWrite)
@@ -231,6 +252,34 @@ class DetectionWindow(QtWidgets.QWidget):
         # "subtract" the grabWidget rectangle to get a mask that only contains
         # the window titlebar and margins
         region -= QtGui.QRegion(grab_geometry)
+
+        self.bbox_widgets.clear()
+        if (current_bboxes is not None) and (len(current_bboxes) > 0):
+            for i in range(len(current_bboxes)):
+                # bbox - [detections.xyxy[i], labels[i], conf[i], class_id[i]]
+                bbox_title = current_bboxes[i][1]
+                bbox_conf = current_bboxes[i][2]
+                bbox_color = self.objectColorsDict[current_bboxes[i][3]]
+                # color the frame
+                self.set_frame_color(bbox_color)
+
+                # Get outer border of detected + header for mask
+                bbox_xyxy = current_bboxes[i][0]
+                bbox_width = bbox_xyxy[2] - bbox_xyxy[0]
+                bbox_height = bbox_xyxy[3] - bbox_xyxy[1]
+
+                # create and add bbox widget
+                bbox = BBoxWidget.BBoxWidget(self, title=f"{bbox_title} {bbox_conf}", color=bbox_color, coords=(bbox_xyxy[0], bbox_xyxy[1]), size=(bbox_width, bbox_height))
+                self.bbox_widgets.append(bbox)
+
+                bbox_region = QtGui.QRegion(bbox_xyxy[0], bbox_xyxy[1], bbox_width, bbox_height)
+                bbox_region.translate(self.contentsMargins().left(), titlebar_geometry.bottom() + self.contentsMargins().top()*2 + 1)
+
+                region += bbox_region
+        else:
+            self.set_frame_color(-1)
+
+        # draw bboxes and frame
         self.setMask(region)
 
     def resizeEvent(self, event):
@@ -246,11 +295,6 @@ class DetectionWindow(QtWidgets.QWidget):
             self.update_mask()
             self.dirty = False
 
-    def update(self) -> None:
-        super(DetectionWindow, self).update()
-        # After update need to check model and send image
-
-
     def run_thread_init_task(self):
         self.thread = QThread()
         self.thread.__PCHthreadName = "ModelThread"
@@ -259,10 +303,11 @@ class DetectionWindow(QtWidgets.QWidget):
 
         # Init model at first
         self.thread.started.connect(self.worker.init_model)
-        # Start processing images now and after model done predicting and updated bboxes
-        self.worker.signals.finished_init.connect(self.worker.process_image)
-        self.worker.signals.updated_bboxes.connect(self.worker.process_image)
-        # self.worker.signals.updated_bboxes.connect(self.check_bboxes)
+        self.worker.signals.finished_init.connect(self.timer.start)
+        # Start processing images after model init and according to timer
+        self.timer_signal.connect(self.worker.process_image)
+
+        self.worker.signals.updated_bboxes.connect(self.check_bboxes)
 
         self.worker.signals.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
@@ -300,13 +345,7 @@ class WorkerSignals(QObject):
 class ModelWorker(QObject):
     '''
         Worker thread
-        Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
-        :param callback: The function callback to run on this worker thread. Supplied args and
-                         kwargs will be passed through to the runner.
-        :type callback: function
-        :param args: Arguments to pass to the callback function
-        :param kwargs: Keywords to pass to the callback function
-        '''
+    '''
 
     def __init__(self, parent):
         super().__init__()
@@ -326,6 +365,7 @@ class ModelWorker(QObject):
             image = self.parent.take_screenshot()
             results = self.parent.send_to_predict(image)
             # after finished get bboxes and update locked bbox_storage
+            current_bboxes = results
             self.mutex.unlock()
             self.signals.updated_bboxes.emit()
         else:
@@ -333,20 +373,9 @@ class ModelWorker(QObject):
             print(f"ModelWorker: mutex is already locked")
         # unlock storage and notify
 
-        # try:
-        #     print("starting model")
-        #     self.parent.model = ECModel.ECModel()
-        # except:
-        #     traceback.print_exc()
-        #     exctype, value = sys.exc_info()[:2]
-        #     self.signals.error.emit((exctype, value, traceback.format_exc()))
-        # # else:
-        #     self.signals.updated_BBoxes.emit()
-        # finally:
-        #     self.signals.finished.emit()  # Done
-        #     print("model done")
         logging.info(f"ModelWorker: ended to process image")
         print(f"ModelWorker: ended to process image")
+
     def init_model(self):
         '''
         Initialise the runner function with passed args, kwargs.

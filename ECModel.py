@@ -24,6 +24,7 @@ weights_path = "C:\\Users\\Alex\\PycharmProjects\\Cursach3\\runs\\detect\\train1
 
 class ECModel(QObject):
     # simple constructor
+    threshold = 0.0
     def __init__(self):
         super().__init__()
         # check if file is legit or shut the app, or download not trained model
@@ -98,10 +99,14 @@ class ECModel(QObject):
         detections = sv.Detections.from_ultralytics(results)
 
         # ['fire fighting vehicle 0.95']
-        labels = [f"{self.model.names[class_id]} {confidence:0.2f}" for _, _, confidence, class_id, _ in detections]
+        labels = [f"{self.model.names[class_id]}" for _, _, _, class_id, _ in detections]
+        conf = [f"{confidence:0.2f}" for _, _, confidence, _, _ in detections]
+        class_id = [class_id for _, _, _, class_id, _ in detections]
+
         bboxes = []
         for i in range(len(detections.confidence)):
-            bboxes.append([detections.xyxy[i], labels[i]])
+            if float(conf[i]) >= self.threshold:
+                bboxes.append([detections.xyxy[i], labels[i], conf[i], class_id[i]])
 
         logging.info(f"Model: bboxes are ready, sending them\n{bboxes}")
         print(f"Model: bboxes are ready, sending them\n{bboxes}")
