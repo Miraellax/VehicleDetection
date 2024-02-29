@@ -15,7 +15,6 @@ import supervision as sv
 
 logging.basicConfig(format='"%(asctime)s [%(levelname)s] %(name)s: %(message)s"',
                     filename='Main.log',
-                    encoding='utf-8',
                     # filemode='w', # if need to erase logs each run
                     )
 
@@ -24,7 +23,7 @@ weights_path = "C:\\Users\\Alex\\PycharmProjects\\Cursach3\\runs\\detect\\train1
 
 class ECModel(QObject):
     # simple constructor
-    threshold = 0.0
+    threshold = 0.6
     def __init__(self):
         super().__init__()
         # check if file is legit or shut the app, or download not trained model
@@ -32,9 +31,9 @@ class ECModel(QObject):
             self.model = YOLO(weights_path)
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         except Exception:
-            print("Cant load model")
+            # print("Cant load model")
             logging.warning("Model: couldn't load the model weights")
-            print("Model: couldn't load the model weights")
+            # print("Model: couldn't load the model weights")
         #     logging
         # if model ok - logging
 
@@ -80,15 +79,16 @@ class ECModel(QObject):
         result = result.permute(2, 0, 1).unsqueeze(0)
 
         return result
+
     def predict(self, image: PIL) -> np.ndarray:
         logging.info("Model: Got image, starting to process")
-        print("Model: Got image, starting to process")
+        # print("Model: Got image, starting to process")
         # resize to
         aug_params = self.get_augment_params(image)
         image_tensor = self.image_augmentation(image, aug_params).to(self.device)
         results = self.model(image_tensor)
         logging.log(f"Model: got predictions\n{results}")
-        print(f"Model: got predictions\n{results}")
+        # print(f"Model: got predictions\n{results}")
         #     log results and time
         return results
 
@@ -109,5 +109,9 @@ class ECModel(QObject):
                 bboxes.append([detections.xyxy[i], labels[i], conf[i], class_id[i]])
 
         logging.info(f"Model: bboxes are ready, sending them\n{bboxes}")
-        print(f"Model: bboxes are ready, sending them\n{bboxes}")
+        # print(f"Model: bboxes are ready, sending them\n{bboxes}")
         return bboxes
+
+    def set_model_threshold(self, new_threshold: float):
+        if 0 <= new_threshold <= 1:
+            self.model.threshold = new_threshold

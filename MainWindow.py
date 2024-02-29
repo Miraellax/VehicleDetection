@@ -12,6 +12,7 @@ import asyncio
 from PIL import Image
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QSize, QBuffer, QTimer, QObject, QThread, pyqtSignal, pyqtSlot, QMutex
+from PyQt5.QtWidgets import QBoxLayout
 
 import CustomTitleBar
 import ECModel
@@ -19,8 +20,7 @@ import BBoxWidget
 
 logging.basicConfig(format='"%(asctime)s [%(levelname)s] %(name)s: %(message)s"',
                     filename='Main.log',
-                    encoding='utf-8',
-                    # filemode='w', # if need to erase logs each run
+                    filemode='w', # if need to erase logs each run
                     )
 
 # set debug mode
@@ -45,8 +45,8 @@ def read_class_dict(path: str) -> tuple:
 
         class_dict = dict(enumerate(class_list, start=0))
         class_dict_colors = dict(enumerate(class_colors, start=0))
-        print(class_dict)
-        print(class_dict_colors)
+        # print(class_dict)
+        # print(class_dict_colors)
 
     return class_dict, class_dict_colors
 
@@ -59,7 +59,7 @@ class DetectionWindow(QtWidgets.QWidget):
         self.dirty = True
         self.setWindowTitle('ECDetector')
         # how often we try to check bboxes and send images to process, model might work slower than this
-        self.fps_check = 1
+        self.fps_check = 60
 
         dict_path = "./Emergency Vehicles Russia.v3i.yolov8"
         self.objectClassesDict, self.objectColorsDict = read_class_dict("./" + dict_path + "/data.yaml")
@@ -97,14 +97,8 @@ class DetectionWindow(QtWidgets.QWidget):
         self.grabWidget = QtWidgets.QWidget()
         self.grabWidget.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.grabWidget.setMinimumSize(self.title_bar.minimumWidth(), 40)
+        self.grabWidget.setLayout(QtWidgets.QVBoxLayout())
 
-        # debug
-        self.grabWidget.setAutoFillBackground(True)
-        self.grabWidget.setStyleSheet(
-            """
-               background-color: gray;
-            """
-        )
         layout.addWidget(self.grabWidget)
 
         # Margins for frame to resize correctly
@@ -115,7 +109,7 @@ class DetectionWindow(QtWidgets.QWidget):
         self.timer_signal.emit()
 
         # debug
-        print("TIMER")
+        # print("TIMER")
 
 
     def check_bboxes(self):
@@ -124,35 +118,30 @@ class DetectionWindow(QtWidgets.QWidget):
         # threading, check if model bboxes are ready and can be visualized
         if current_bboxes is None:
             logging.info("Main: Tried to check bboxes, but they are None type")
-            print("Main: Tried to check bboxes, but they are None type")
+            # print("Main: Tried to check bboxes, but they are None type")
             return
 
         if len(current_bboxes) == 0:
             logging.info("Main: Tried to check bboxes, but there are no bboxes")
-            print("Main: Tried to check bboxes, but there are no bboxes")
+            # print("Main: Tried to check bboxes, but there are no bboxes")
             self.update_mask()
             return
 
         # if answers ready - visualise
         if mutex.tryLock():
             logging.info("Main: locked bboxes, updating interface")
-            print("Main: locked bboxes, updating interface")
+            # print("Main: locked bboxes, updating interface")
 
-            print("BEBOXES good")
             self.update_mask()
 
             logging.info("Main: unlocking bboxes")
-            print("Main: unlocking bboxes")
+            # print("Main: unlocking bboxes")
             mutex.unlock()
 
     def show_model_init_error(self):
         pass
 
-    def set_model_threshold(self, new_threshold: float):
-        if new_threshold >= 0 and new_threshold <= 1:
-            self.model.threshold = new_threshold
 
-    # TODO
     def set_frame_color(self, object_class: int, multiple_classes: bool = False) -> object:
         """
         Set frame color if car is detected or other signal sent
@@ -180,8 +169,8 @@ class DetectionWindow(QtWidgets.QWidget):
                 frame_palette.setColor(self.backgroundRole(), getattr(Qt, color))
                 self.title_bar.set_color(color)
             except AttributeError:
-                print(f"Attribute error, color {color} for {object_class} class does not exist.")
-        #         log in error logs
+                # print(f"Attribute error, color {color} for {object_class} class does not exist.")
+                logging.error(f"Attribute error, color {color} for {object_class} class does not exist.")
 
         # Single class - emergency car
         else:
@@ -192,7 +181,7 @@ class DetectionWindow(QtWidgets.QWidget):
 
     def take_screenshot(self):
         # TODO учитывать наличие нескольких экранов
-        print("Screen")
+        # print("Screen")
         screen = QtWidgets.QApplication.primaryScreen()
         screen_zone = self.grabWidget.geometry()
         screen_zone.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))
@@ -219,7 +208,7 @@ class DetectionWindow(QtWidgets.QWidget):
         # pil_im.show()
 
         logging.info("Sending image to model to process")
-        print("Sending image to model to process")
+        # print("Sending image to model to process")
         result = self.model.process_image(pil_im)
         return result
 
@@ -254,6 +243,7 @@ class DetectionWindow(QtWidgets.QWidget):
         region -= QtGui.QRegion(grab_geometry)
 
         self.bbox_widgets.clear()
+        self.grabWidget.layout().children().clear()
         if (current_bboxes is not None) and (len(current_bboxes) > 0):
             for i in range(len(current_bboxes)):
                 # bbox - [detections.xyxy[i], labels[i], conf[i], class_id[i]]
@@ -271,11 +261,18 @@ class DetectionWindow(QtWidgets.QWidget):
                 # create and add bbox widget
                 bbox = BBoxWidget.BBoxWidget(self, title=f"{bbox_title} {bbox_conf}", color=bbox_color, coords=(bbox_xyxy[0], bbox_xyxy[1]), size=(bbox_width, bbox_height))
                 self.bbox_widgets.append(bbox)
+                self.grabWidget.layout().addChildWidget(bbox)
+                bbox.show()
 
-                bbox_region = QtGui.QRegion(bbox_xyxy[0], bbox_xyxy[1], bbox_width, bbox_height)
+                bbox_region = QtGui.QRegion(int(bbox_xyxy[0]), int(bbox_xyxy[1]), int(bbox_width), int(bbox_height))
                 bbox_region.translate(self.contentsMargins().left(), titlebar_geometry.bottom() + self.contentsMargins().top()*2 + 1)
 
                 region += bbox_region
+
+                # make transparent window in bbox
+                transparent_geometry = bbox.transparent_window.geometry()
+                transparent_geometry.translate(bbox_region.rects()[0].x(), bbox_region.rects()[0].y()-bbox.contentsMargins().top())
+                region -= QtGui.QRegion(transparent_geometry)
         else:
             self.set_frame_color(-1)
 
@@ -316,7 +313,7 @@ class DetectionWindow(QtWidgets.QWidget):
         # self.worker.progress.connect(self.reportProgress)
 
         logging.info("Main: starting model init thread")
-        print("Main: starting model init thread")
+        # print("Main: starting model init thread")
         self.thread.start()
 
         # # Final resets
@@ -360,7 +357,7 @@ class ModelWorker(QObject):
         # look on current image, lock it
         if self.mutex.tryLock():
             logging.info(f"{self} started to process image")
-            print(f"{self} started to process image")
+            # print(f"{self} started to process image")
             # send it to process
             image = self.parent.take_screenshot()
             results = self.parent.send_to_predict(image)
@@ -370,11 +367,11 @@ class ModelWorker(QObject):
             self.signals.updated_bboxes.emit()
         else:
             logging.info(f"ModelWorker: mutex is already locked")
-            print(f"ModelWorker: mutex is already locked")
+            # print(f"ModelWorker: mutex is already locked")
         # unlock storage and notify
 
         logging.info(f"ModelWorker: ended to process image")
-        print(f"ModelWorker: ended to process image")
+        # print(f"ModelWorker: ended to process image")
 
     def init_model(self):
         '''
@@ -382,7 +379,7 @@ class ModelWorker(QObject):
         '''
         # Retrieve args/kwargs here; and fire processing using them
         try:
-            print("starting model")
+            # print("starting model")
             self.parent.model = ECModel.ECModel()
             self.parent.model.moveToThread(self.parent.thread)
         except:

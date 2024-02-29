@@ -1,7 +1,22 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QPalette, QIcon
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QToolButton, QStyle, QToolTip, QMenu, QAction, QMenuBar, QSizePolicy
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QLabel, QToolButton, QStyle, QAction, QMenuBar, QWidgetAction, QHBoxLayout, QSlider
+
+
+class SliderAction(QWidgetAction):
+    def __init__(self, current_level):
+        super().__init__(self)
+        self.layout = QHBoxLayout()
+        self.label = QLabel(str(current_level))
+        self.slider = QSlider()
+
+        self.layout.addWidget(self.label)
+
+    def valueChanged(self, event):
+        super(self.slider, self).valueChanged(event)
+
+        print("CHANGED")
 
 
 class CustomTitleBar(QtWidgets.QWidget):
@@ -26,11 +41,11 @@ class CustomTitleBar(QtWidgets.QWidget):
         self.menu.setIcon(QIcon("menu_icon.png"))
         title_bar_layout.addWidget(self.menu_bar)
 
-        self.newAction = QAction("1", self)
+        # self.slider_action = SliderAction(0.2)
         self.openAction = QAction("2", self)
         self.saveAction = QAction("3", self)
         self.exitAction = QAction("4", self)
-        self.menu.addAction(self.newAction)
+        # self.menu.addAction(self.newAction)
         self.menu.addAction(self.openAction)
         self.menu.addAction(self.saveAction)
         self.menu.addAction(self.exitAction)
@@ -66,14 +81,6 @@ class CustomTitleBar(QtWidgets.QWidget):
         self.setStyleSheet("""QToolTip {  
                                            color: red;
                                        }""")
-
-        # debug screenshot button
-        # self.screen_button = QToolButton(self)
-        # screen_icon = self.style().standardIcon(
-        #     QStyle.StandardPixmap.SP_FileIcon
-        # )
-        # self.screen_button.setIcon(screen_icon)
-        # self.screen_button.clicked.connect(self.parentWidget().take_screenshot)
 
         # Min button
         self.min_button = QToolButton(self)

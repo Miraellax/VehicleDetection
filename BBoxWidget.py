@@ -15,11 +15,11 @@ from PyQt5.QtCore import Qt, QSize, QBuffer, QTimer, QObject, QThread, pyqtSigna
 from PyQt5.QtGui import QWindow
 from PyQt5.QtWidgets import QLabel, QSizePolicy, QFrame
 
-from MainWindow import DetectionWindow
+import MainWindow
 
 
 class BBoxWidget(QFrame):
-    def __init__(self, parent:DetectionWindow, title: str, color:str, coords:tuple, size:tuple):
+    def __init__(self, parent:MainWindow, title: str, color:str, coords:tuple, size:tuple):
         super(BBoxWidget, self).__init__()
 
         self.parent = parent
@@ -49,10 +49,18 @@ class BBoxWidget(QFrame):
         self.title.setStyleSheet("font-weight: bold")
         layout.addWidget(self.title)
 
+        self.transparent_window = QtWidgets.QWidget()
+        self.transparent_window.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.transparent_window.setAutoFillBackground(True)
+        frame_palette = self.transparent_window.palette()
+        frame_palette.setColor(self.transparent_window.backgroundRole(), getattr(Qt, "white"))
+        self.transparent_window.setPalette(frame_palette)
+        layout.addWidget(self.transparent_window)
+
         # limit widget AND layout margins
-        # layout.setContentsMargins(0, 0, 0, 0)
-        # self.setContentsMargins(0, 0, 0, 0)
-        # layout.setSpacing(0)
+        layout.setContentsMargins(1, 1, 1, 1)
+        self.setContentsMargins(2, 2, 2, 2)
+        layout.setSpacing(0)
 
         # # Margins for frame to resize correctly
         # self.setContentsMargins(2, 2, 2, 2)
@@ -61,7 +69,7 @@ if __name__ == '__main__':
     import sys
     app = QtWidgets.QApplication(sys.argv)
 
-    window = BBoxWidget(None, "help 0.84", "red", (200, 400), (200, 400))
+    window = BBoxWidget(None, "help 0.84", "blue", (200, 400), (200, 400))
     window.show()
 
     sys.exit(app.exec_())
