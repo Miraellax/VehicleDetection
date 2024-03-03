@@ -37,6 +37,27 @@ class ECModel(QObject):
         #     logging
         # if model ok - logging
 
+    def image_augmentation_no_padding(self, image, size):
+
+
+        augmentation = Compose([
+            transforms.Resize((size[0], size[1])),
+            transforms.ToTensor()
+        ])
+
+        result = augmentation(image)
+        # [batch_size, channels, height, width]
+        result = result.permute(2, 0, 1).unsqueeze(0)
+
+        return result
+
+    def get_augment_params_no_padding(self, image):
+        #     new_width, new_height
+        new_width = math.ceil(image.width / 32) * 32
+        new_height = math.ceil(image.width / 32) * 32
+
+        return (new_width, new_height)
+
     def get_augment_params(self, image):
         #     new_width, new_height, padding/2, is_wider
         width = image.width
@@ -83,10 +104,16 @@ class ECModel(QObject):
     def predict(self, image: PIL) -> np.ndarray:
         logging.info("Model: Got image, starting to process")
         # print("Model: Got image, starting to process")
-        # resize to
-        aug_params = self.get_augment_params(image)
-        image_tensor = self.image_augmentation(image, aug_params).to(self.device)
+
+        # aug_params = self.get_augment_params(image)
+        # image_tensor = self.image_augmentation(image, aug_params).to(self.device)
+        # results = self.model(image_tensor)
+
+
+        aug_params = self.get_augment_params_no_padding(image)
+        image_tensor = self.image_augmentation_no_padding(image, aug_params).to(self.device)
         results = self.model(image_tensor)
+
         logging.log(f"Model: got predictions\n{results}")
         # print(f"Model: got predictions\n{results}")
         #     log results and time
