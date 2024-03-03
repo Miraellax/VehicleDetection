@@ -12,7 +12,6 @@ import asyncio
 from PIL import Image
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QSize, QBuffer, QTimer, QObject, QThread, pyqtSignal, pyqtSlot, QMutex
-from PyQt5.QtWidgets import QBoxLayout
 
 import CustomTitleBar
 import ECModel
@@ -180,8 +179,6 @@ class DetectionWindow(QtWidgets.QWidget):
         self.setPalette(frame_palette)
 
     def take_screenshot(self):
-        # TODO учитывать наличие нескольких экранов
-        # print("Screen")
         screen = QtWidgets.QApplication.primaryScreen()
         screen_zone = self.grabWidget.geometry()
         screen_zone.moveTopLeft(self.grabWidget.mapToGlobal(QtCore.QPoint(0, 0)))

@@ -12,6 +12,7 @@ from torchvision.transforms.v2 import Compose
 from ultralytics import YOLO
 import logging
 import supervision as sv
+from timeit import default_timer as timer
 
 logging.basicConfig(format='"%(asctime)s [%(levelname)s] %(name)s: %(message)s"',
                     filename='Main.log',
@@ -24,6 +25,8 @@ weights_path = "C:\\Users\\Alex\\PycharmProjects\\Cursach3\\runs\\detect\\train1
 class ECModel(QObject):
     # simple constructor
     threshold = 0.6
+    last_fps = None
+
     def __init__(self):
         super().__init__()
         # check if file is legit or shut the app, or download not trained model
@@ -38,7 +41,6 @@ class ECModel(QObject):
         # if model ok - logging
 
     def image_augmentation_no_padding(self, image, size):
-
 
         augmentation = Compose([
             transforms.Resize((size[0], size[1])),
@@ -56,7 +58,7 @@ class ECModel(QObject):
         new_width = math.ceil(image.width / 32) * 32
         new_height = math.ceil(image.width / 32) * 32
 
-        return (new_width, new_height)
+        return new_width, new_height
 
     def get_augment_params(self, image):
         #     new_width, new_height, padding/2, is_wider
@@ -102,13 +104,13 @@ class ECModel(QObject):
         return result
 
     def predict(self, image: PIL) -> np.ndarray:
+
         logging.info("Model: Got image, starting to process")
         # print("Model: Got image, starting to process")
 
         # aug_params = self.get_augment_params(image)
         # image_tensor = self.image_augmentation(image, aug_params).to(self.device)
         # results = self.model(image_tensor)
-
 
         aug_params = self.get_augment_params_no_padding(image)
         image_tensor = self.image_augmentation_no_padding(image, aug_params).to(self.device)
@@ -120,6 +122,7 @@ class ECModel(QObject):
         return results
 
     def process_image(self, image: PIL):
+        start = timer()
         results = self.model.predict(image)[0]
 
         # Detections(xyxy=array([[46.362, 43.064, 233.17, 129.77]], dtype=float32), mask=None, confidence=array([0.94702], dtype=float32), class_id=array([1]), tracker_id=None)
@@ -135,8 +138,11 @@ class ECModel(QObject):
             if float(conf[i]) >= self.threshold:
                 bboxes.append([detections.xyxy[i], labels[i], conf[i], class_id[i]])
 
-        logging.info(f"Model: bboxes are ready, sending them\n{bboxes}")
-        # print(f"Model: bboxes are ready, sending them\n{bboxes}")
+        end = timer()
+        self.last_fps = int(1 // (end - start))
+        print("FPS", self.last_fps)
+        logging.info(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
+        # print(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
         return bboxes
 
     def set_model_threshold(self, new_threshold: float):
