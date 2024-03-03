@@ -28,6 +28,10 @@ class CustomTitleBar(QtWidgets.QWidget):
         self.setAutoFillBackground(True)
         self.initial_pos = None
 
+        # TODO check in settings file
+        self.is_showing_fps = True
+        self.is_showing_class_name = True
+
         title_bar_layout = QtWidgets.QHBoxLayout(self)
         title_bar_layout.setContentsMargins(1, 1, 1, 1)
 
@@ -41,14 +45,20 @@ class CustomTitleBar(QtWidgets.QWidget):
         self.menu.setIcon(QIcon("menu_icon.png"))
         title_bar_layout.addWidget(self.menu_bar)
 
+        # TODO add widget to show fps text and show/hide it
+
         # self.slider_action = SliderAction(0.2)
-        self.openAction = QAction("2", self)
-        self.saveAction = QAction("3", self)
-        self.exitAction = QAction("4", self)
+        self.show_class_name = QAction("Показывать имя класса", self, checkable=True)
+        self.show_class_name.setChecked(self.is_showing_class_name)
+        self.show_class_name.triggered.connect(self.change_show_class_name_state)
+
+        self.show_fps = QAction("Показывать FPS", self, checkable=True)
+        self.show_fps.setChecked(self.is_showing_fps)
+        self.show_fps.triggered.connect(self.change_show_fps_state)
+
         # self.menu.addAction(self.newAction)
-        self.menu.addAction(self.openAction)
-        self.menu.addAction(self.saveAction)
-        self.menu.addAction(self.exitAction)
+        self.menu.addAction(self.show_class_name)
+        self.menu.addAction(self.show_fps)
 
         self.menu_bar.show()
 
@@ -109,10 +119,17 @@ class CustomTitleBar(QtWidgets.QWidget):
             button.setStyleSheet("background-color: white;")
             title_bar_layout.addWidget(button)
 
+    def change_show_fps_state(self):
+        # logic to show fps in title bar or not
+        self.is_showing_fps = self.show_fps.isChecked()
+
+    def change_show_class_name_state(self):
+        # logic to class name in bboxes or not
+        self.is_showing_class_name = self.show_class_name.isChecked()
+
     def set_color(self, color: str):
         self.menu_bar.setStyleSheet(f"background-color: {color};")
         for elem in self.objects_to_color:
-            # elem.setStyleSheet(f"background-color: {color};")
             palette = elem.palette()
             palette.setColor(self.backgroundRole(), getattr(Qt, color))
             elem.setPalette(palette)
