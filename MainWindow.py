@@ -63,11 +63,6 @@ class DetectionWindow(QtWidgets.QWidget):
         dict_path = "./Emergency Vehicles Russia.v3i.yolov8"
         self.objectClassesDict, self.objectColorsDict = read_class_dict("./" + dict_path + "/data.yaml")
 
-        # init model and model thread
-        self.model = None
-        self.timer = QTimer(self, interval=1000 // self.fps_check, timeout=self.handle_timeout)
-        self.run_thread_init_task()
-
         # list for bbox frames to include in mask
         self.bbox_widgets = []
 
@@ -78,6 +73,11 @@ class DetectionWindow(QtWidgets.QWidget):
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
 
         self.title_bar = CustomTitleBar.CustomTitleBar(self)
+
+        # init model and model thread
+        self.model = None
+        self.timer = QTimer(self, interval=1000 // self.fps_check, timeout=self.handle_timeout)
+        self.run_thread_init_task()
 
         # Creating vertical layout to hold inner interface elements
         layout = QtWidgets.QVBoxLayout()
@@ -244,7 +244,7 @@ class DetectionWindow(QtWidgets.QWidget):
         if (current_bboxes is not None) and (len(current_bboxes) > 0):
             for i in range(len(current_bboxes)):
                 # bbox - [detections.xyxy[i], labels[i], conf[i], class_id[i]]
-                bbox_title = current_bboxes[i][1]
+                bbox_class = current_bboxes[i][1]
                 bbox_conf = current_bboxes[i][2]
                 bbox_color = self.objectColorsDict[current_bboxes[i][3]]
                 # color the frame
@@ -256,7 +256,12 @@ class DetectionWindow(QtWidgets.QWidget):
                 bbox_height = bbox_xyxy[3] - bbox_xyxy[1]
 
                 # create and add bbox widget
-                bbox = BBoxWidget.BBoxWidget(self, title=f"{bbox_title} {bbox_conf}", color=bbox_color, coords=(bbox_xyxy[0], bbox_xyxy[1]), size=(bbox_width, bbox_height))
+                if self.title_bar.is_showing_class_name:
+                    bbox_title = f"{bbox_class} {bbox_conf}"
+                else:
+                    bbox_title = f"{bbox_conf}"
+
+                bbox = BBoxWidget.BBoxWidget(self, title=bbox_title, color=bbox_color, coords=(bbox_xyxy[0], bbox_xyxy[1]), size=(bbox_width, bbox_height))
                 self.bbox_widgets.append(bbox)
                 self.grabWidget.layout().addChildWidget(bbox)
                 bbox.show()
@@ -298,6 +303,7 @@ class DetectionWindow(QtWidgets.QWidget):
         # Init model at first
         self.thread.started.connect(self.worker.init_model)
         self.worker.signals.finished_init.connect(self.timer.start)
+        self.worker.signals.finished_init.connect(self.title_bar.hide_warning)
         # Start processing images after model init and according to timer
         self.timer_signal.connect(self.worker.process_image)
 
@@ -360,6 +366,7 @@ class ModelWorker(QObject):
             results = self.parent.send_to_predict(image)
             # after finished get bboxes and update locked bbox_storage
             current_bboxes = results
+            self.parent.title_bar.update_fps(self.parent.model.last_fps)
             self.mutex.unlock()
             self.signals.updated_bboxes.emit()
         else:

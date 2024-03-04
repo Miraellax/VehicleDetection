@@ -1,19 +1,6 @@
-import io
-import math
-import os
-import time
-import traceback
-from asyncio import sleep
-
-import yaml
-import logging
-import asyncio
-
-from PIL import Image
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QSize, QBuffer, QTimer, QObject, QThread, pyqtSignal, pyqtSlot, QMutex
-from PyQt5.QtGui import QWindow
-from PyQt5.QtWidgets import QLabel, QSizePolicy, QFrame
+from PyQt5 import  QtWidgets
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QLabel, QFrame
 
 import MainWindow
 
@@ -37,11 +24,9 @@ class BBoxWidget(QFrame):
         frame_palette.setColor(self.backgroundRole(), getattr(Qt, self.class_color))
         self.setPalette(frame_palette)
 
-
         layout = QtWidgets.QVBoxLayout()
         layout.setAlignment(Qt.AlignTop)
         self.setLayout(layout)
-
 
         self.title = QLabel()
         self.title.setText(title)
@@ -65,11 +50,11 @@ class BBoxWidget(QFrame):
         # # Margins for frame to resize correctly
         # self.setContentsMargins(2, 2, 2, 2)
 
-if __name__ == '__main__':
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-
-    window = BBoxWidget(None, "help 0.84", "blue", (200, 400), (200, 400))
-    window.show()
-
-    sys.exit(app.exec_())
+# if __name__ == '__main__':
+#     import sys
+#     app = QtWidgets.QApplication(sys.argv)
+#
+#     window = BBoxWidget(None, "help 0.84", "blue", (200, 400), (200, 400))
+#     window.show()
+#
+#     sys.exit(app.exec_())

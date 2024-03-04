@@ -140,7 +140,7 @@ class ECModel(QObject):
 
         end = timer()
         self.last_fps = int(1 // (end - start))
-        print("FPS", self.last_fps)
+        # print("FPS", self.last_fps)
         logging.info(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
         # print(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
         return bboxes

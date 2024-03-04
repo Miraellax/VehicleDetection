@@ -3,27 +3,25 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QLabel, QToolButton, QStyle, QAction, QMenuBar, QWidgetAction, QHBoxLayout, QSlider
 
-
-class SliderAction(QWidgetAction):
-    def __init__(self, current_level):
-        super().__init__(self)
-        self.layout = QHBoxLayout()
-        self.label = QLabel(str(current_level))
-        self.slider = QSlider()
-
-        self.layout.addWidget(self.label)
-
-    def valueChanged(self, event):
-        super(self.slider, self).valueChanged(event)
-
-        print("CHANGED")
-
+# class SliderAction(QWidgetAction):
+#     def __init__(self, current_level):
+#         super().__init__(self)
+#         self.layout = QHBoxLayout()
+#         self.label = QLabel(str(current_level))
+#         self.slider = QSlider()
+#
+#         self.layout.addWidget(self.label)
+#
+#     def valueChanged(self, event):
+#         super(self.slider, self).valueChanged(event)
+#         print("CHANGED")
 
 class CustomTitleBar(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__(parent)
         self.setMinimumWidth(100)
         self.setMinimumHeight(20)
+        self.fps = 0
 
         self.setAutoFillBackground(True)
         self.initial_pos = None
@@ -33,7 +31,7 @@ class CustomTitleBar(QtWidgets.QWidget):
         self.is_showing_class_name = True
 
         title_bar_layout = QtWidgets.QHBoxLayout(self)
-        title_bar_layout.setContentsMargins(1, 1, 1, 1)
+        title_bar_layout.setContentsMargins(0, 0, 0, 0)
 
         self.objects_to_color = [self]
 
@@ -45,20 +43,19 @@ class CustomTitleBar(QtWidgets.QWidget):
         self.menu.setIcon(QIcon("menu_icon.png"))
         title_bar_layout.addWidget(self.menu_bar)
 
-        # TODO add widget to show fps text and show/hide it
-
-        # self.slider_action = SliderAction(0.2)
-        self.show_class_name = QAction("Показывать имя класса", self, checkable=True)
+        self.show_class_name = QAction(text="Показывать имя класса", parent=self, checkable=True)
         self.show_class_name.setChecked(self.is_showing_class_name)
         self.show_class_name.triggered.connect(self.change_show_class_name_state)
 
-        self.show_fps = QAction("Показывать FPS", self, checkable=True)
+        self.show_fps = QAction(text="Показывать FPS", parent=self, checkable=True)
         self.show_fps.setChecked(self.is_showing_fps)
         self.show_fps.triggered.connect(self.change_show_fps_state)
 
-        # self.menu.addAction(self.newAction)
+        # self.slider_action = SliderAction(0.2)
+
         self.menu.addAction(self.show_class_name)
         self.menu.addAction(self.show_fps)
+        # self.menu.addAction(self.slider_action)
 
         self.menu_bar.show()
 
@@ -77,13 +74,25 @@ class CustomTitleBar(QtWidgets.QWidget):
         if title := parent.windowTitle():
             self.title.setText(title)
         title_bar_layout.addWidget(self.title)
+
+        self.fps_text = QLabel(f"{self.fps} FPS", self)
+        self.fps_text.setStyleSheet(
+            """font-weight: bold;
+               border-radius: 12px;
+               margin: 2px;
+               color: black;
+            """
+        )
+        self.fps_text.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        title_bar_layout.addWidget(self.fps_text)
+        title_bar_layout.addStretch()
         
         self.model_indicator = QToolButton(self)
         warning_icon = self.style().standardIcon(
             QStyle.StandardPixmap.SP_MessageBoxWarning
         )
         self.model_indicator.setIcon(warning_icon)
-        self.model_indicator.setToolTip("<b>WARNING:</b> model is not loaded")
+        self.model_indicator.setToolTip("<b>ВНИМАНИЕ:</b> модель не загружена")
         self.model_indicator.setFixedSize(QSize(self.minimumHeight() - 2, self.minimumHeight() - 2))
         self.model_indicator.setStyleSheet("background-color: rgba(255, 255, 255, 0);")
         title_bar_layout.addWidget(self.model_indicator)
@@ -122,10 +131,18 @@ class CustomTitleBar(QtWidgets.QWidget):
     def change_show_fps_state(self):
         # logic to show fps in title bar or not
         self.is_showing_fps = self.show_fps.isChecked()
+        self.fps_text.setHidden(not self.is_showing_fps)
 
     def change_show_class_name_state(self):
         # logic to class name in bboxes or not
         self.is_showing_class_name = self.show_class_name.isChecked()
+    #     emit signal for all bboxes existing and created in future
+
+    def update_fps(self, new_fps):
+        self.fps_text.setText(f"{new_fps} FPS")
+
+    def hide_warning(self):
+        self.model_indicator.setHidden(True)
 
     def set_color(self, color: str):
         self.menu_bar.setStyleSheet(f"background-color: {color};")
