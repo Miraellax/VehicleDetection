@@ -243,6 +243,7 @@ class DetectionWindow(QtWidgets.QWidget):
         self.grabWidget.layout().children().clear()
         if (current_bboxes is not None) and (len(current_bboxes) > 0):
             for i in range(len(current_bboxes)):
+                # TODO фильтр чекбокс по типу классов? Фильтр "показывать не показывать обычные машины"?
                 # bbox - [detections.xyxy[i], labels[i], conf[i], class_id[i]]
                 bbox_class = current_bboxes[i][1]
                 bbox_conf = current_bboxes[i][2]

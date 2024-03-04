@@ -51,11 +51,17 @@ class CustomTitleBar(QtWidgets.QWidget):
         self.show_fps.setChecked(self.is_showing_fps)
         self.show_fps.triggered.connect(self.change_show_fps_state)
 
-        # self.slider_action = SliderAction(0.2)
-
+        # self.confidence_slider = QSlider(Qt.Orientation.Horizontal, self)
+        # self.confidence_slider.setRange(0, 100)
+        # # TODO get conf from settings file
+        # self.confidence_slider.setValue(50)
+        # self.confidence_slider.valueChanged.connect(self.update_confidense_threshold)
+        #
+        # self.confidence_slider_action = QWidgetAction(self.confidence_slider)
+        #
         self.menu.addAction(self.show_class_name)
         self.menu.addAction(self.show_fps)
-        # self.menu.addAction(self.slider_action)
+        # self.menu.addAction(self.confidence_slider_action)
 
         self.menu_bar.show()
 
@@ -127,6 +133,9 @@ class CustomTitleBar(QtWidgets.QWidget):
             button.setFixedSize(QSize(self.minimumHeight() - 4, self.minimumHeight() - 4))
             button.setStyleSheet("background-color: white;")
             title_bar_layout.addWidget(button)
+
+    def update_confidense_threshold(self, value):
+        print(f"UPDATED CONF {value}")
 
     def change_show_fps_state(self):
         # logic to show fps in title bar or not

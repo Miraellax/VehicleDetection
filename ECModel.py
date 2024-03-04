@@ -24,7 +24,7 @@ weights_path = "C:\\Users\\Alex\\PycharmProjects\\Cursach3\\runs\\detect\\train1
 
 class ECModel(QObject):
     # simple constructor
-    threshold = 0.6
+    threshold = 0.75
     last_fps = None
 
     def __init__(self):
@@ -123,7 +123,7 @@ class ECModel(QObject):
 
     def process_image(self, image: PIL):
         start = timer()
-        results = self.model.predict(image)[0]
+        results = self.model.predict(image, verbose=False)[0]
 
         # Detections(xyxy=array([[46.362, 43.064, 233.17, 129.77]], dtype=float32), mask=None, confidence=array([0.94702], dtype=float32), class_id=array([1]), tracker_id=None)
         detections = sv.Detections.from_ultralytics(results)
