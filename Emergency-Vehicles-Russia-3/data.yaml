@@ -12,5 +12,5 @@ roboflow:
   version: 3
   workspace: emergency-vehicles-russia
 test: ../test/images
-train: ../train/images
-val: ../valid/images
+train: Emergency-Vehicles-Russia-3/train/images
+val: Emergency-Vehicles-Russia-3/valid/images

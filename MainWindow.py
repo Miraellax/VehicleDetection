@@ -1,26 +1,25 @@
-import io
-import math
-import os
-import time
-import traceback
-from asyncio import sleep
-
-import yaml
 import logging
-import asyncio
+import io
+import os
+import traceback
+from logging.handlers import MemoryHandler
+
+import numpy as np
+import yaml
+
 
 from PIL import Image
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QSize, QBuffer, QTimer, QObject, QThread, pyqtSignal, pyqtSlot, QMutex
+from PyQt5.QtCore import Qt, QBuffer, QTimer, QObject, QThread, pyqtSignal, pyqtSlot, QMutex, QUrl
+from PyQt5.QtMultimedia import QSoundEffect
 
 import CustomTitleBar
 import ECModel
 import BBoxWidget
 
-logging.basicConfig(format='"%(asctime)s [%(levelname)s] %(name)s: %(message)s"',
-                    filename='Main.log',
-                    filemode='w', # if need to erase logs each run
-                    )
+logging.basicConfig(filename='Main_log.log',
+                            filemode='a'
+                            )
 
 # set debug mode
 os.environ["PYTHONASYNCIODEBUG"] = "1"
@@ -30,9 +29,7 @@ current_image = None
 
 mutex = QMutex()
 
-# TODO settings
-# def InitSettings():
-#     with open("./settings", )
+
 def read_class_dict(path: str) -> tuple:
     """
     :type path: str
@@ -44,8 +41,6 @@ def read_class_dict(path: str) -> tuple:
 
         class_dict = dict(enumerate(class_list, start=0))
         class_dict_colors = dict(enumerate(class_colors, start=0))
-        # print(class_dict)
-        # print(class_dict_colors)
 
     return class_dict, class_dict_colors
 
@@ -57,11 +52,23 @@ class DetectionWindow(QtWidgets.QWidget):
         super(DetectionWindow, self).__init__()
         self.dirty = True
         self.setWindowTitle('ECDetector')
-        # how often we try to check bboxes and send images to process, model might work slower than this
-        self.fps_check = 60
+        self.model_name = "YOLOv8s"  # default model
 
+        # Read dicts from path
         dict_path = "./Emergency Vehicles Russia.v3i.yolov8"
         self.objectClassesDict, self.objectColorsDict = read_class_dict("./" + dict_path + "/data.yaml")
+        self.weights_dict = np.load('resources/model_weight_dict.npy', allow_pickle=True).item()
+
+        self.logger = self.set_logger()
+
+        # set max detection rate
+        self.fps_check = 30
+        self.timer = QTimer(self, interval=1000 // self.fps_check, timeout=self.handle_timeout)
+
+        self.sound_player = QSoundEffect()
+        self.sound_player.setSource(QUrl.fromLocalFile("resources/short_alarm.wav"))
+
+        self.title_bar = CustomTitleBar.CustomTitleBar(self)
 
         # list for bbox frames to include in mask
         self.bbox_widgets = []
@@ -72,11 +79,8 @@ class DetectionWindow(QtWidgets.QWidget):
         # ensure that the widget always stays on top, no matter what
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
 
-        self.title_bar = CustomTitleBar.CustomTitleBar(self)
-
         # init model and model thread
         self.model = None
-        self.timer = QTimer(self, interval=1000 // self.fps_check, timeout=self.handle_timeout)
         self.run_thread_init_task()
 
         # Creating vertical layout to hold inner interface elements
@@ -103,37 +107,49 @@ class DetectionWindow(QtWidgets.QWidget):
         # Margins for frame to resize correctly
         self.setContentsMargins(2, 2, 2, 2)
 
+    def set_logger(self):
+        logger = logging.getLogger()
+        handler = logging.StreamHandler()
+        memory_handler = MemoryHandler(1024*100, flushLevel=logging.ERROR, flushOnClose=True)
+
+        formatter = logging.Formatter(
+            "%(asctime)s [%(levelname)s] %(message)s")
+        handler.setFormatter(formatter)
+
+        self.logger = logging.getLogger('main_logger')
+        logger.addHandler(handler)
+        logger.addHandler(memory_handler)
+        logger.setLevel(logging.INFO)
+        print()
+
+        return logger
     def handle_timeout(self):
         # some logic and start image processing in model thread
         self.timer_signal.emit()
-
-        # debug
-        # print("TIMER")
-
 
     def check_bboxes(self):
         global current_bboxes
 
         # threading, check if model bboxes are ready and can be visualized
         if current_bboxes is None:
-            logging.info("Main: Tried to check bboxes, but they are None type")
+            self.logger.debug("Main: Tried to check bboxes, but they are None type")
             # print("Main: Tried to check bboxes, but they are None type")
             return
 
         if len(current_bboxes) == 0:
-            logging.info("Main: Tried to check bboxes, but there are no bboxes")
+            self.logger.debug("Main: Tried to check bboxes, but there are no bboxes")
             # print("Main: Tried to check bboxes, but there are no bboxes")
             self.update_mask()
             return
 
         # if answers ready - visualise
         if mutex.tryLock():
-            logging.info("Main: locked bboxes, updating interface")
+            self.logger.debug("Main: locked bboxes, updating interface")
             # print("Main: locked bboxes, updating interface")
 
             self.update_mask()
 
-            logging.info("Main: unlocking bboxes")
+            self.logger.debug("Main: unlocking bboxes")
             # print("Main: unlocking bboxes")
             mutex.unlock()
 
@@ -160,16 +176,13 @@ class DetectionWindow(QtWidgets.QWidget):
             return
 
         if multiple_classes:
-            # TODO поддержка нескольких объектов в кадре - смена цвета,
-            #  приоритеты цветов (class asyncio.PriorityQueue), красить в несколько цветов рамку?
-
             color = self.objectColorsDict[object_class]
             try:
                 frame_palette.setColor(self.backgroundRole(), getattr(Qt, color))
                 self.title_bar.set_color(color)
             except AttributeError:
                 # print(f"Attribute error, color {color} for {object_class} class does not exist.")
-                logging.error(f"Attribute error, color {color} for {object_class} class does not exist.")
+                self.logger.error(f"Attribute error, color {color} for {object_class} class does not exist.")
 
         # Single class - emergency car
         else:
@@ -204,7 +217,7 @@ class DetectionWindow(QtWidgets.QWidget):
         pil_im = Image.open(io.BytesIO(buffer.data()))
         # pil_im.show()
 
-        logging.info("Sending image to model to process")
+        self.logger.debug("Sending image to model to process")
         # print("Sending image to model to process")
         result = self.model.process_image(pil_im)
         return result
@@ -243,39 +256,43 @@ class DetectionWindow(QtWidgets.QWidget):
         self.grabWidget.layout().children().clear()
         if (current_bboxes is not None) and (len(current_bboxes) > 0):
             for i in range(len(current_bboxes)):
-                # TODO фильтр чекбокс по типу классов? Фильтр "показывать не показывать обычные машины"?
-                # bbox - [detections.xyxy[i], labels[i], conf[i], class_id[i]]
-                bbox_class = current_bboxes[i][1]
-                bbox_conf = current_bboxes[i][2]
-                bbox_color = self.objectColorsDict[current_bboxes[i][3]]
-                # color the frame
-                self.set_frame_color(bbox_color)
+                try:
+                    # bbox -> [detections.xyxy[i], labels[i], conf[i], class_id[i]]
+                    bbox_class = current_bboxes[i][1]
+                    bbox_conf = current_bboxes[i][2]
+                    bbox_color = self.objectColorsDict[current_bboxes[i][3]]
+                    # color the frame
+                    self.set_frame_color(bbox_color)
 
-                # Get outer border of detected + header for mask
-                bbox_xyxy = current_bboxes[i][0]
-                bbox_width = bbox_xyxy[2] - bbox_xyxy[0]
-                bbox_height = bbox_xyxy[3] - bbox_xyxy[1]
+                    # Get outer border of detected + header for mask
+                    bbox_xyxy = current_bboxes[i][0]
+                    bbox_width = bbox_xyxy[2] - bbox_xyxy[0]
+                    bbox_height = bbox_xyxy[3] - bbox_xyxy[1]
 
-                # create and add bbox widget
-                if self.title_bar.is_showing_class_name:
-                    bbox_title = f"{bbox_class} {bbox_conf}"
-                else:
-                    bbox_title = f"{bbox_conf}"
+                    # create and add bbox widget
+                    if self.title_bar.is_showing_class_name:
+                        bbox_title = f"{bbox_class} {bbox_conf}"
+                    else:
+                        bbox_title = f"{bbox_conf}"
 
-                bbox = BBoxWidget.BBoxWidget(self, title=bbox_title, color=bbox_color, coords=(bbox_xyxy[0], bbox_xyxy[1]), size=(bbox_width, bbox_height))
-                self.bbox_widgets.append(bbox)
-                self.grabWidget.layout().addChildWidget(bbox)
-                bbox.show()
+                    bbox = BBoxWidget.BBoxWidget(self, title=bbox_title, color=bbox_color, coords=(bbox_xyxy[0], bbox_xyxy[1]), size=(bbox_width, bbox_height))
+                    self.bbox_widgets.append(bbox)
+                    self.grabWidget.layout().addChildWidget(bbox)
+                    if (not self.sound_player.isPlaying() and bbox_class != "non emergency car"):
+                        self.sound_player.play()
+                    bbox.show()
 
-                bbox_region = QtGui.QRegion(int(bbox_xyxy[0]), int(bbox_xyxy[1]), int(bbox_width), int(bbox_height))
-                bbox_region.translate(self.contentsMargins().left(), titlebar_geometry.bottom() + self.contentsMargins().top()*2 + 1)
+                    bbox_region = QtGui.QRegion(int(bbox_xyxy[0]), int(bbox_xyxy[1]), int(bbox_width), int(bbox_height))
+                    bbox_region.translate(self.contentsMargins().left(), titlebar_geometry.bottom() + self.contentsMargins().top()*2 + 1)
 
-                region += bbox_region
+                    region += bbox_region
 
-                # make transparent window in bbox
-                transparent_geometry = bbox.transparent_window.geometry()
-                transparent_geometry.translate(bbox_region.rects()[0].x(), bbox_region.rects()[0].y()-bbox.contentsMargins().top())
-                region -= QtGui.QRegion(transparent_geometry)
+                    # make transparent window in bbox
+                    transparent_geometry = bbox.transparent_window.geometry()
+                    transparent_geometry.translate(bbox_region.rects()[0].x(), bbox_region.rects()[0].y()-bbox.contentsMargins().top())
+                    region -= QtGui.QRegion(transparent_geometry)
+                except Exception:
+                    self.logger.error("Error occurred while drawing mask ")
         else:
             self.set_frame_color(-1)
 
@@ -295,10 +312,20 @@ class DetectionWindow(QtWidgets.QWidget):
             self.update_mask()
             self.dirty = False
 
+
     def run_thread_init_task(self):
+        # delete existing thread if present
+        if type(self.thread) is QThread and self.thread.isRunning():
+            self.thread.quit()
+            self.thread.wait()
+            # Finally, detach (and probably garbage collect) the objects
+            # used by this class.
+            del self.worker
+            del self.thread
+
         self.thread = QThread()
         self.thread.__PCHthreadName = "ModelThread"
-        self.worker = ModelWorker(self)
+        self.worker = ModelWorker(self, self.model_name)
         self.worker.moveToThread(self.thread)
 
         # Init model at first
@@ -314,20 +341,23 @@ class DetectionWindow(QtWidgets.QWidget):
         self.thread.finished.connect(self.thread.deleteLater)
 
         self.worker.signals.error.connect(self.show_model_init_error)
-        # self.worker.progress.connect(self.reportProgress)
 
-        logging.info("Main: starting model init thread")
-        # print("Main: starting model init thread")
+        self.logger.info(f"Main: starting {self.model_name} model init thread")
         self.thread.start()
 
-        # # Final resets
-        # self.longRunningBtn.setEnabled(False)
-        # self.thread.finished.connect(
-        #     lambda: self.longRunningBtn.setEnabled(True)
-        # )
-        # self.thread.finished.connect(
-        #     lambda: self.stepLabel.setText("Long-Running Step: 0")
-        # )
+class ModelThread(QThread):
+    def __init__(self,parent):
+        super(ModelThread, self).__init__()
+        self.threadactive = True
+        self.parent = parent
+
+    def run(self):
+        while True:
+            if self.isInterruptionRequested():
+                self.quit()
+            self.sleep(100)
+            print("aaaaaaaaaaaaaaaaa")
+
 
 class WorkerSignals(QObject):
     '''
@@ -348,9 +378,11 @@ class ModelWorker(QObject):
         Worker thread
     '''
 
-    def __init__(self, parent):
+    def __init__(self, parent, model_name):
         super().__init__()
         self.parent = parent
+        self.logger = parent.logger
+        self.model_name = model_name
         self.signals = WorkerSignals()
         self.mutex = QMutex()
 
@@ -360,7 +392,7 @@ class ModelWorker(QObject):
         global current_bboxes
         # look on current image, lock it
         if self.mutex.tryLock():
-            logging.info(f"{self} started to process image")
+            self.logger.debug(f"{self} started to process image")
             # print(f"{self} started to process image")
             # send it to process
             image = self.parent.take_screenshot()
@@ -371,23 +403,22 @@ class ModelWorker(QObject):
             self.mutex.unlock()
             self.signals.updated_bboxes.emit()
         else:
-            logging.info(f"ModelWorker: mutex is already locked")
+            self.logger.debug(f"ModelWorker: mutex is already locked")
             # print(f"ModelWorker: mutex is already locked")
         # unlock storage and notify
 
-        logging.info(f"ModelWorker: ended to process image")
+        self.logger.debug(f"ModelWorker: ended to process image")
         # print(f"ModelWorker: ended to process image")
 
     def init_model(self):
         '''
         Initialise the runner function with passed args, kwargs.
         '''
-        # Retrieve args/kwargs here; and fire processing using them
         try:
             # print("starting model")
-            self.parent.model = ECModel.ECModel()
+            self.parent.model = ECModel.ECModel(self.parent, self.model_name)
             self.parent.model.moveToThread(self.parent.thread)
-        except:
+        except Exception:
             traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
             self.signals.error.emit((exctype, value, traceback.format_exc()))

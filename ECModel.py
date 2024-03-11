@@ -14,28 +14,24 @@ import logging
 import supervision as sv
 from timeit import default_timer as timer
 
-logging.basicConfig(format='"%(asctime)s [%(levelname)s] %(name)s: %(message)s"',
-                    filename='Main.log',
-                    # filemode='w', # if need to erase logs each run
-                    )
-
-weights_path = "C:\\Users\\Alex\\PycharmProjects\\Cursach3\\runs\\detect\\train11\\weights\\best.pt"
-
-
+# Read dict from path
+weights_dict = np.load('resources/model_weight_dict.npy', allow_pickle=True).item()
 class ECModel(QObject):
     # simple constructor
     threshold = 0.75
     last_fps = None
 
-    def __init__(self):
+    def __init__(self,parent, model_name):
         super().__init__()
+        self.parent = parent
         # check if file is legit or shut the app, or download not trained model
         try:
-            self.model = YOLO(weights_path)
+            self.model_name = model_name
+            self.model = YOLO(str(weights_dict[self.model_name]))
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         except Exception:
             # print("Cant load model")
-            logging.warning("Model: couldn't load the model weights")
+            self.parent.logger.error("Model: couldn't load the model weights")
             # print("Model: couldn't load the model weights")
         #     logging
         # if model ok - logging
@@ -103,22 +99,36 @@ class ECModel(QObject):
 
         return result
 
+    def image_augmentation_640(self, image):
+        augmentation = Compose([
+            transforms.Resize((640, 640)),
+            transforms.ToTensor()
+        ])
+        result = augmentation(image)
+        # [batch_size, channels, height, width]
+        result = result.unsqueeze(0)
+
+        return result
+
     def predict(self, image: PIL) -> np.ndarray:
 
-        logging.info("Model: Got image, starting to process")
+        self.parent.logger.debug("Model: Got image, starting to process")
         # print("Model: Got image, starting to process")
 
+        # # custom resize to devidable by 32 and padding (long, but minimal loss of info)
         # aug_params = self.get_augment_params(image)
         # image_tensor = self.image_augmentation(image, aug_params).to(self.device)
         # results = self.model(image_tensor)
 
-        aug_params = self.get_augment_params_no_padding(image)
-        image_tensor = self.image_augmentation_no_padding(image, aug_params).to(self.device)
+        # # custom resize  (medium, some loss of info)
+        # aug_params = self.get_augment_params_no_padding(image)
+        # image_tensor = self.image_augmentation_no_padding(image, aug_params).to(self.device)
+        # results = self.model(image_tensor)
+
+        # # resize to 640x640 (fast)
+        image_tensor = self.image_augmentation_640(image).to(self.device)
         results = self.model(image_tensor)
 
-        logging.log(f"Model: got predictions\n{results}")
-        # print(f"Model: got predictions\n{results}")
-        #     log results and time
         return results
 
     def process_image(self, image: PIL):
@@ -140,9 +150,10 @@ class ECModel(QObject):
 
         end = timer()
         self.last_fps = int(1 // (end - start))
-        # print("FPS", self.last_fps)
-        logging.info(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
-        # print(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
+        if len(bboxes) > 0:
+            self.parent.logger.info(f"Model: got predictions\n{bboxes}")
+        self.parent.logger.debug(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
+
         return bboxes
 
     def set_model_threshold(self, new_threshold: float):
