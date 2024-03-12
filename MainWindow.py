@@ -58,7 +58,7 @@ class DetectionWindow(QtWidgets.QWidget):
         dict_path = "./Emergency Vehicles Russia.v3i.yolov8"
         self.objectClassesDict, self.objectColorsDict = read_class_dict("./" + dict_path + "/data.yaml")
         self.weights_dict = np.load('resources/model_weight_dict.npy', allow_pickle=True).item()
-
+        print(self.objectColorsDict)
         self.logger = self.set_logger()
 
         # set max detection rate
@@ -157,7 +157,7 @@ class DetectionWindow(QtWidgets.QWidget):
         pass
 
 
-    def set_frame_color(self, object_class: int, multiple_classes: bool = False) -> object:
+    def set_frame_color(self, object_class: int, multiple_classes: bool = False):
         """
         Set frame color if car is detected or other signal sent
         :param object_class:
@@ -204,8 +204,8 @@ class DetectionWindow(QtWidgets.QWidget):
                                            screen_zone[2],  # width
                                            screen_zone[3],  # height
                                        )
-        # gebug save
-        screenshot.save('shot.jpg', 'jpg')
+        # # gebug save
+        # screenshot.save('shot.jpg', 'jpg')
 
         return screenshot
 
@@ -344,19 +344,6 @@ class DetectionWindow(QtWidgets.QWidget):
 
         self.logger.info(f"Main: starting {self.model_name} model init thread")
         self.thread.start()
-
-class ModelThread(QThread):
-    def __init__(self,parent):
-        super(ModelThread, self).__init__()
-        self.threadactive = True
-        self.parent = parent
-
-    def run(self):
-        while True:
-            if self.isInterruptionRequested():
-                self.quit()
-            self.sleep(100)
-            print("aaaaaaaaaaaaaaaaa")
 
 
 class WorkerSignals(QObject):

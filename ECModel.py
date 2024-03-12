@@ -18,7 +18,7 @@ from timeit import default_timer as timer
 weights_dict = np.load('resources/model_weight_dict.npy', allow_pickle=True).item()
 class ECModel(QObject):
     # simple constructor
-    threshold = 0.75
+    threshold = 0.8
     last_fps = None
 
     def __init__(self,parent, model_name):
@@ -29,9 +29,10 @@ class ECModel(QObject):
             self.model_name = model_name
             self.model = YOLO(str(weights_dict[self.model_name]))
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            self.logger = self.parent.logger
         except Exception:
             # print("Cant load model")
-            self.parent.logger.error("Model: couldn't load the model weights")
+            self.logger.error("Model: couldn't load the model weights")
             # print("Model: couldn't load the model weights")
         #     logging
         # if model ok - logging
@@ -112,7 +113,7 @@ class ECModel(QObject):
 
     def predict(self, image: PIL) -> np.ndarray:
 
-        self.parent.logger.debug("Model: Got image, starting to process")
+        self.logger.debug("Model: Got image, starting to process")
         # print("Model: Got image, starting to process")
 
         # # custom resize to devidable by 32 and padding (long, but minimal loss of info)
@@ -151,8 +152,8 @@ class ECModel(QObject):
         end = timer()
         self.last_fps = int(1 // (end - start))
         if len(bboxes) > 0:
-            self.parent.logger.info(f"Model: got predictions\n{bboxes}")
-        self.parent.logger.debug(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
+            self.logger.info(f"Model: got predictions\n{bboxes}")
+        self.logger.debug(f"Model: bboxes are ready in {self.last_fps} fps speed, sending them\n{bboxes}")
 
         return bboxes
 

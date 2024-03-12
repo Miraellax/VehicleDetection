@@ -31,7 +31,6 @@ class CustomTitleBar(QtWidgets.QWidget):
 
         self.objects_to_color = [self]
 
-        # File menu
         self.menu_bar = QMenuBar(self)
         self.menu_bar.setFixedWidth(36)
         self.menu_bar.setAutoFillBackground(True)
