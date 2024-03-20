@@ -187,3 +187,4 @@ class CustomTitleBar(QtWidgets.QWidget):
         delta = QtCore.QPoint(evt.globalPos() - self.parentWidget().oldPos)
         self.parentWidget().move(self.parentWidget().x() + delta.x(), self.parentWidget().y() + delta.y())
         self.parentWidget().oldPos = evt.globalPos()
+ 

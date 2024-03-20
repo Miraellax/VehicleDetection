@@ -52,7 +52,7 @@ class DetectionWindow(QtWidgets.QWidget):
         super(DetectionWindow, self).__init__()
         self.dirty = True
         self.setWindowTitle('ECDetector')
-        self.model_name = "YOLOv8s"  # default model
+        self.model_name = "YOLOv8m"  # default model
 
         # Read dicts from path
         dict_path = "./Emergency Vehicles Russia.v3i.yolov8"
@@ -157,7 +157,7 @@ class DetectionWindow(QtWidgets.QWidget):
         pass
 
 
-    def set_frame_color(self, object_class: int, multiple_classes: bool = False):
+    def set_frame_color(self, object_class: str, multiple_classes: bool = False):
         """
         Set frame color if car is detected or other signal sent
         :param object_class:
@@ -173,6 +173,10 @@ class DetectionWindow(QtWidgets.QWidget):
             frame_palette.setColor(self.backgroundRole(), getattr(Qt, "gray"))
             self.title_bar.set_color("gray")
             self.setPalette(frame_palette)
+            return
+
+        # non emergency car
+        if object_class == "gray":
             return
 
         if multiple_classes:
@@ -252,8 +256,10 @@ class DetectionWindow(QtWidgets.QWidget):
         # the window titlebar and margins
         region -= QtGui.QRegion(grab_geometry)
 
+
+        for i in reversed(range(self.grabWidget.layout().children())):
+            self.grabWidget.layout().itemAt(i).widget().deleteLater()
         self.bbox_widgets.clear()
-        self.grabWidget.layout().children().clear()
         if (current_bboxes is not None) and (len(current_bboxes) > 0):
             for i in range(len(current_bboxes)):
                 try:

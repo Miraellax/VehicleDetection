@@ -50,11 +50,11 @@ class BBoxWidget(QFrame):
         # # Margins for frame to resize correctly
         # self.setContentsMargins(2, 2, 2, 2)
 
-# if __name__ == '__main__':
-#     import sys
-#     app = QtWidgets.QApplication(sys.argv)
-#
-#     window = BBoxWidget(None, "help 0.84", "blue", (200, 400), (200, 400))
-#     window.show()
-#
-#     sys.exit(app.exec_())
+if __name__ == '__main__':
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+
+    window = BBoxWidget(None, "Имя класса (вероятность)", "yellow", (200, 300), (200, 150))
+    window.show()
+
+    sys.exit(app.exec_())
