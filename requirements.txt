@@ -164,9 +164,6 @@ pyqt5-plugins==5.15.9.2.3
 PyQt5-Qt5==5.15.2
 PyQt5-sip==12.13.0
 pyqt5-tools==5.15.9.3.3
-PyQt6==6.6.1
-PyQt6-Qt6==6.6.1
-PyQt6-sip==13.6.0
 pyRFC3339==1.1
 pyrsistent==0.20.0
 python-dateutil==2.8.2

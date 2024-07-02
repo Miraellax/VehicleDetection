@@ -1,5 +1,0 @@
-ambulance
-fire fighting vehicle
-intensive care unit
-non emergency car
-police car
